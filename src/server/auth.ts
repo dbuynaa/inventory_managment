@@ -1,34 +1,53 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import {
-  getServerSession,
-  type DefaultSession,
-  type NextAuthOptions,
-} from "next-auth";
-import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import NextAuth, {
+  type DefaultSession
+  // type NextAuthOptions
+} from 'next-auth';
+import { type Adapter } from 'next-auth/adapters';
+import type { NextAuthConfig } from 'next-auth';
 
-import { env } from "@/env";
-import { db } from "@/server/db";
-
+// import { env } from '@/env';
+import { db } from '@/server/db';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import bcrypt from 'bcrypt';
+import { type UserRole } from '@prisma/client';
+import { z } from 'zod';
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module "next-auth" {
+
+// declare module 'next-auth' {
+//   type UserSession = DefaultSession['user'];
+//   interface Session {
+//     user: UserSession;
+//   }
+
+//   interface CredentialsInputs {
+//     email: string;
+//     password: string;
+//   }
+// }
+declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+      phoneNumber: string;
+      role: UserRole;
+    } & DefaultSession['user'];
+  }
+  interface CredentialsInputs {
+    phoneNumber: string;
+    password: string;
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    role: UserRole;
+    phoneNumber: string;
+  }
 }
 
 /**
@@ -36,37 +55,89 @@ declare module "next-auth" {
  *
  * @see https://next-auth.js.org/configuration/options
  */
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
-  },
-  adapter: PrismaAdapter(db) as Adapter,
-  providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
-  ],
-};
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnAdmin = nextUrl.pathname.startsWith('/admin');
+      if (isOnAdmin) {
+        if (isLoggedIn) return true;
+        return false; // Redirect unauthenticated users to login page
+      } else if (isLoggedIn) {
+        return Response.redirect(new URL('/admin', nextUrl));
+      }
+      return true;
+    }
 
-/**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
- *
- * @see https://next-auth.js.org/configuration/nextjs
- */
-export const getServerAuthSession = () => getServerSession(authOptions);
+    // session({ session, user }) {
+    //   if (session.user) {
+    //     session.user.id = user.id;
+    //     session.user.role = user.role;
+    //     session.user.phoneNumber = user.phoneNumber;
+    //     session.user.name = user.name;
+    //   }
+    //   return session;
+    // },
+    // async jwt({ token, user }) {
+    //   if (user) {
+    //     token.id = user.id;
+    //     token.role = user.role;
+    //     token.phoneNumber = user.phoneNumber;
+    //     token.name = user.name;
+    //   }
+    //   return token;
+    // }
+  },
+
+  // adapter: PrismaAdapter(db) as Adapter,
+  providers: [
+    CredentialsProvider({
+      name: 'credentials',
+      credentials: {
+        phoneNumber: { label: 'Phone Number', type: 'text' },
+        password: { label: 'Password', type: 'password' }
+      },
+      async authorize(credentials) {
+        const parsedCredentials = z
+          .object({
+            phoneNumber: z.string().min(8),
+            password: z.string().min(6)
+          })
+          .safeParse(credentials);
+
+        if (!credentials?.phoneNumber || !credentials?.password) {
+          return null;
+        }
+
+        if (parsedCredentials.success) {
+          const { phoneNumber, password } = parsedCredentials.data;
+          const user = await db.user.findFirst({
+            where: {
+              phoneNumber: phoneNumber
+            }
+          });
+          if (!user) return null;
+
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+
+          if (passwordsMatch)
+            return {
+              phoneNumber: user.phoneNumber,
+              role: user.role,
+              name: user.name,
+              id: user.id,
+              image: user.image
+            };
+        }
+
+        return null;
+      }
+    })
+  ],
+  pages: {
+    signIn: '/'
+    // signOut: '/'
+  }
+} satisfies NextAuthConfig;
+
+export const { auth, signIn, signOut, handlers } = NextAuth(authOptions);
