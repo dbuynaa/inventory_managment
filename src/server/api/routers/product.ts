@@ -7,30 +7,24 @@ import {
 } from '@/server/api/trpc';
 
 export const productRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`
-      };
-    }),
-
   create: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1),
         description: z.string(),
+        quantity: z.number(),
+        price: z.number(),
         categoryId: z.string(),
-        supplierId: z.string(),
-        price: z.number()
+        supplierId: z.string().optional()
       })
     )
     .mutation(async ({ ctx, input }) => {
       const { categoryId, supplierId, ..._input } = input;
+      console.log('userId ===?', ctx.session.user);
       return await ctx.db.product.create({
         data: {
           ..._input,
-          supplier: { connect: { id: supplierId } },
+          // supplier: { connect: { id: supplierId } },
           category: { connect: { id: categoryId } },
           createdBy: { connect: { id: ctx.session.user.id } }
         }
@@ -46,7 +40,12 @@ export const productRouter = createTRPCRouter({
     return product ?? null;
   }),
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return 'you can now see this secret message!';
-  })
+  getById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const product = await ctx.db.product.findUnique({
+        where: { id: input.id }
+      });
+      return product ?? null;
+    })
 });

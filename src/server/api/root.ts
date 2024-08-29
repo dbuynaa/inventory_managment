@@ -1,5 +1,5 @@
-import { productRouter } from "@/server/api/routers/product";
-import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
+import { productRouter, categoryRouter } from '@/server/api/routers';
+import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
 
 /**
  * This is the primary router for your server.
@@ -8,6 +8,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   product: productRouter,
+  category: categoryRouter
 });
 
 // export type definition of API

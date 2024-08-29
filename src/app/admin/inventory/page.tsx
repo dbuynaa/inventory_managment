@@ -1,14 +1,15 @@
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import PageContainer from '@/components/layout/page-container';
-import { columns, InventoryTable } from '@/components/tables/inventory-tables';
+'use client';
+
+import { PageContainer } from '@/components/layout';
 import { buttonVariants } from '@/components/ui/button';
-import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { Product, ProductsDocument, ProductsQuery } from '@/graphql/generated';
-import { getClient } from '@/lib/apollo/ApolloClientRSC';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+import { DataTable } from './_components/data-table';
+import { columns } from './_components/columts';
+import { api } from '@/trpc/react';
+import { type Product } from '@prisma/client';
 
 const breadcrumbItems = [{ title: 'Inventory', link: '/admin/inventory' }];
 
@@ -16,28 +17,10 @@ interface paramsProps {
   searchParams: Record<string, string | string[] | undefined>;
 }
 
-export default async function Page({ searchParams }: paramsProps) {
+export default function Page({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
-  //   const country = searchParams.search || null;
-  //   const offset = (page - 1) * pageLimit;
-  const { data, error } = await getClient().query<ProductsQuery>({
-    query: ProductsDocument,
-    variables: {
-      take: pageLimit,
-      skip: pageLimit,
-      where: {
-        search: searchParams.search,
-        filter: {
-          date: searchParams.date,
-        },
-        orderBy: searchParams.order,
-      },
-    },
-  });
-  const products = data?.products?.data;
-  const total = data?.products?.count || 0;
-  const pageCount = Math.ceil(total / pageLimit);
+  const { data, error } = api.product.getLatest.useQuery();
 
   if (error) {
     return <div className="text-red-500">{error.message}</div>;
@@ -46,13 +29,13 @@ export default async function Page({ searchParams }: paramsProps) {
   return (
     <PageContainer>
       <div className="space-y-4">
-        <Breadcrumbs items={breadcrumbItems} />
+        {/* <Breadcrumb items={breadcrumbItems} /> */}
 
         <div className="flex items-start justify-between">
-          <Heading
+          {/* <Heading
             title={`Total Products (${total})`}
             description="Manage employees (Server side table functionalities.)"
-          />
+          /> */}
 
           <Link
             href={'/admin/inventory/new'}
@@ -65,14 +48,9 @@ export default async function Page({ searchParams }: paramsProps) {
 
         {/* <DataTable columns={columns} data={products || []} searchKey="name" /> */}
 
-        <InventoryTable
-          searchKey="country"
-          pageNo={page}
-          columns={columns as Product[]}
-          totalUsers={total}
-          data={products || []}
-          searchParams={searchParams}
-          pageCount={pageCount}
+        <DataTable
+          columns={columns}
+          data={(data as unknown as Product[]) ?? []}
         />
       </div>
     </PageContainer>

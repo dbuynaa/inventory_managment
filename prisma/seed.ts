@@ -1,9 +1,47 @@
-import { PrismaClient, type UserRole } from '@prisma/client';
+import { type Category, PrismaClient, type UserRole } from '@prisma/client';
 import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-async function main() {
+async function seedCategory() {
+  console.log('🍀 Seed your db successfully!');
+
+  const categoryTest = [
+    {
+      id: '1',
+      name: 'Fruits'
+    },
+    {
+      id: '2',
+      name: 'Vegetables'
+    }
+  ];
+
+  for (const item of categoryTest) {
+    const category = await prisma.category.findUnique({
+      where: { id: item.id }
+    });
+    if (category) {
+      await prisma.category.update({
+        where: { id: category.id },
+        data: {
+          name: item.name,
+          id: item.id,
+          updatedAt: new Date()
+        }
+      });
+    } else {
+      await prisma.category.create({
+        data: {
+          name: item.name,
+          id: item.id
+        }
+      });
+    }
+  }
+}
+
+async function seedUser() {
   console.log('🍀 Seed your db successfully!');
   const userTest = [
     {
@@ -48,7 +86,12 @@ async function main() {
 
   console.log('Seeding completed');
 }
-main()
+
+async function seed() {
+  await seedUser();
+  await seedCategory();
+}
+seed()
   .catch((e) => {
     console.error(e);
     process.exit(1);

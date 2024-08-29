@@ -36,10 +36,7 @@ export default function AuthenticationPage() {
     authenticate,
     undefined
   );
-  // const defaultValues = {
-  //   phoneNumber: '',
-  //   phassword: ''
-  // };
+
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema)
   });

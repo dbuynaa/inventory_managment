@@ -2,6 +2,8 @@ import '@/styles/globals.css';
 
 import { GeistSans } from 'geist/font/sans';
 import { type Metadata } from 'next';
+import { Toaster } from '@/components/ui/toaster';
+import NextTopLoader from 'nextjs-toploader';
 
 import { Providers } from '@/components/layout';
 import { TRPCReactProvider } from '@/trpc/react';
@@ -22,7 +24,11 @@ export default async function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <TRPCReactProvider>
-          <Providers session={session}>{children}</Providers>
+          <Providers session={session}>
+            <NextTopLoader showSpinner={false} />
+            <Toaster />
+            {children}
+          </Providers>
         </TRPCReactProvider>
       </body>
     </html>
