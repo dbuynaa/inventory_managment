@@ -1,46 +1,13 @@
-'use client';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useActionState } from 'react';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-
-const formSchema = z.object({
-  phoneNumber: z.string().min(1, { message: 'Phone number is required' }),
-  password: z.string().min(1, { message: 'Password is required' })
-});
-
-type UserFormValue = z.infer<typeof formSchema>;
-
-// import { type Metadata } from 'next';
 import Link from 'next/link';
-import { authenticate } from '@/lib/actions';
-import { CircleAlertIcon } from 'lucide-react';
+import { type Metadata } from 'next';
+import UserAuthForm from './_components/userAuthForm';
 
-// export const metadata: Metadata = {
-//   title: 'Authentication',
-//   description: 'Authentication forms built using the components.'
-// };
+export const metadata: Metadata = {
+  title: 'Authentication',
+  description: 'Authentication forms built using the components.'
+};
 
 export default function AuthenticationPage() {
-  const [errorMessage, formAction, isPending] = useActionState(
-    authenticate,
-    undefined
-  );
-
-  const form = useForm<UserFormValue>({
-    resolver: zodResolver(formSchema)
-  });
-
   return (
     <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
@@ -81,65 +48,7 @@ export default function AuthenticationPage() {
               Enter your email below to create your account
             </p>
           </div>
-          <Form {...form}>
-            <form action={formAction} className="w-full space-y-2">
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Enter your phone number..."
-                        disabled={isPending}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Enter your password..."
-                        disabled={isPending}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button
-                aria-disabled={isPending}
-                className="ml-auto w-full"
-                type="submit"
-              >
-                {isPending ? 'Loading...' : 'Continue'}
-              </Button>
-              <div
-                className="flex h-8 items-end space-x-1"
-                aria-live="polite"
-                aria-atomic="true"
-              >
-                {errorMessage && (
-                  <>
-                    <CircleAlertIcon className="h-5 w-5 text-red-500" />
-                    <p className="text-sm text-red-500">{errorMessage}</p>
-                  </>
-                )}
-              </div>
-            </form>
-          </Form>
+          <UserAuthForm />
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />

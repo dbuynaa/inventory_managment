@@ -1,14 +1,13 @@
 import NextAuth, { type DefaultSession } from 'next-auth';
 import type { DefaultJWT } from 'next-auth/jwt';
-// import { type Adapter } from 'next-auth/adapters';
 import type { NextAuthConfig } from 'next-auth';
 
-// import { env } from '@/env';
 import { db } from '@/server/db';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { type UserRole } from '@prisma/client';
 import { z } from 'zod';
+
 declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
@@ -126,7 +125,9 @@ export const authOptions = {
   },
 
   pages: {
-    signIn: '/'
+    error: '/',
+    signIn: '/',
+    signOut: '/'
   }
 } satisfies NextAuthConfig;
 

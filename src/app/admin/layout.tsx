@@ -1,6 +1,8 @@
 import { Header, Sidebar } from '@/components/layout';
 import type { Metadata } from 'next';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { Suspense } from 'react';
+import Loading from './loading';
 
 export const metadata: Metadata = {
   title: 'Next Shadcn Dashboard Starter',

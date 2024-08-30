@@ -2,6 +2,7 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { api } from '@/trpc/server';
 import { ProductForm } from '../_components/product-form';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 export default async function InventoryPage({
   params
@@ -18,7 +19,7 @@ export default async function InventoryPage({
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-8">
-        {/* <Breadcrumbs items={breadcrumbItems} /> */}
+        <Breadcrumbs items={breadcrumbItems} />
         <ProductForm
           categories={categories || []}
           initialData={product ?? null}

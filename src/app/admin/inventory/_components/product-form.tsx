@@ -1,11 +1,10 @@
 'use client';
-import * as z from 'zod';
+import type * as z from 'zod';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Trash } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -26,21 +25,13 @@ import {
 import { type Category, type Product } from '@prisma/client';
 import { api } from '@/trpc/react';
 import { useToast } from '@/components/ui/use-toast';
+import { AlertModal } from '@/components/modal/alert-modal';
+import { Heading } from '@/components/ui/heading';
+import { productCreateInput } from '@/server/api/types';
+import { FormInput } from '@/components/form/form-item';
 export const IMG_MAX_LIMIT = 3;
 
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(3, { message: 'Product Name must be at least 3 characters' }),
-  description: z
-    .string()
-    .min(3, { message: 'Product description must be at least 3 characters' }),
-  price: z.coerce.number(),
-  quantity: z.coerce.number(),
-  categoryId: z.string().min(1, { message: 'Please select a category' })
-});
-
-type ProductFormValues = z.infer<typeof formSchema>;
+type ProductFormValues = z.infer<typeof productCreateInput>;
 
 interface ProductFormProps {
   initialData: Product | null;
@@ -52,26 +43,66 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   categories
 }) => {
   const router = useRouter();
+  const utils = api.useUtils();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const action = initialData ? 'Save changes' : 'Create';
 
-  const { mutate, isPending: loading } = api.product.create.useMutation({
-    onSuccess: () => {
-      toast({
-        title: 'Product created.'
-      });
-      setOpen(false);
-      router.refresh();
-    },
-    onError: (message) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: message.message
-      });
-    }
-  });
+  const { mutate: deleteProduct, isPending: deleteLoading } =
+    api.product.delete.useMutation({
+      onSuccess: () => {
+        toast({
+          title: 'Product deleted.'
+        });
+      },
+      onSettled: async () => {
+        setOpen(false);
+        await utils.product.invalidate();
+        router.push('/admin/inventory');
+      },
+      onError: (message) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: message.message
+        });
+      }
+    });
+
+  const { mutate: createProduct, isPending: loadingCreate } =
+    api.product.create.useMutation({
+      onSuccess: () => {
+        toast({
+          title: 'Product created.'
+        });
+      },
+      onSettled: async () => {
+        router.push('/admin/inventory');
+        await utils.product.invalidate();
+      },
+      onError: (message) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: message.message
+        });
+      }
+    });
+
+  const { mutate: updateProduct, isPending: loadingUpdate } =
+    api.product.update.useMutation({
+      onSuccess: () => toast({ title: 'Product updated.' }),
+      onSettled: async () => {
+        await utils.product.invalidate();
+        router.push('/admin/inventory');
+      },
+      onError: (message) =>
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: message.message
+        })
+    });
 
   const defaultValues: ProductFormValues = {
     name: initialData?.name ?? '',
@@ -81,35 +112,41 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     categoryId: initialData?.categoryId ?? ''
   };
   const form = useForm<ProductFormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(productCreateInput),
     defaultValues
   });
 
   const onSubmit = async (data: ProductFormValues) => {
-    mutate(data);
+    if (initialData?.id) {
+      updateProduct({ ...data, id: initialData?.id });
+    } else createProduct(data);
   };
 
   const onDelete = () => {
     if (!initialData?.id) return;
-    router.refresh();
-    // router.push(`/${params.storeId}/products`);
+    deleteProduct({ id: initialData.id });
   };
 
-  // const triggerImgUrlValidation = () => form.trigger('imgUrl');
+  const loading = loadingCreate || loadingUpdate || deleteLoading;
 
   return (
     <>
-      {/* <AlertModal
+      <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
-        // loading={deleteLoading}
-      /> */}
+        loading={deleteLoading}
+      />
       <div className="flex items-center justify-between">
-        {/* <Heading title={title} description={description} /> */}
+        <Heading
+          title={initialData?.id ? 'Update' : 'Create'}
+          description={
+            initialData?.id ? 'Update product' : 'Create new product'
+          }
+        />
         {initialData?.id && (
           <Button
-            // disabled={deleteLoading}
+            disabled={deleteLoading}
             variant="destructive"
             size="sm"
             onClick={() => setOpen(true)}
@@ -124,84 +161,41 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-8"
         >
-          {/* <FormField
-            control={form.control}
-            name="imgUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Images</FormLabel>
-                <FormControl>
-                  <FileUpload
-                    onChange={field.onChange}
-                    value={field.value}
-                    onRemove={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
           <div className="gap-8 md:grid md:grid-cols-3">
-            <FormField
-              control={form.control}
+            <FormInput
+              form={form}
+              label="Name"
               name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Product name"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              inputProps={{
+                disabled: loading,
+                placeholder: 'Product name'
+              }}
             />
-            <FormField
-              control={form.control}
+            <FormInput
+              form={form}
+              label="Description"
               name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Product description"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              inputProps={{
+                disabled: loading,
+                placeholder: 'Product description'
+              }}
             />
-            <FormField
-              control={form.control}
+            <FormInput
+              form={form}
+              label="Price"
               name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price</FormLabel>
-                  <FormControl>
-                    <Input type="number" disabled={loading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              inputProps={{
+                type: 'number',
+                disabled: loading
+              }}
             />
-            <FormField
-              control={form.control}
+            <FormInput
+              form={form}
+              label="Quantity"
               name="quantity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Quantity</FormLabel>
-                  <FormControl>
-                    <Input type="number" disabled={loading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              inputProps={{ disabled: loading, type: 'number' }}
             />
+
             <FormField
               control={form.control}
               name="categoryId"

@@ -7,7 +7,7 @@ import NextTopLoader from 'nextjs-toploader';
 
 import { Providers } from '@/components/layout';
 import { TRPCReactProvider } from '@/trpc/react';
-import { auth } from '@/server/auth';
+import { auth } from '@/auth';
 
 export const metadata: Metadata = {
   title: 'Create T3 App',

@@ -136,7 +136,7 @@ export const navItems: NavItem[] = [
   {
     title: 'Inventory',
     href: '/admin/inventory',
-    icon: 'billing',
+    icon: 'inventory',
     label: 'inventory'
   }
 ];

@@ -5,22 +5,13 @@ import {
   protectedProcedure,
   publicProcedure
 } from '@/server/api/trpc';
+import { productCreateInput } from '../types';
 
 export const productRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(1),
-        description: z.string(),
-        quantity: z.number(),
-        price: z.number(),
-        categoryId: z.string(),
-        supplierId: z.string().optional()
-      })
-    )
+    .input(productCreateInput)
     .mutation(async ({ ctx, input }) => {
       const { categoryId, supplierId, ..._input } = input;
-      console.log('userId ===?', ctx.session.user);
       return await ctx.db.product.create({
         data: {
           ..._input,
@@ -31,13 +22,33 @@ export const productRouter = createTRPCRouter({
       });
     }),
 
-  getLatest: protectedProcedure.query(async ({ ctx }) => {
-    const product = await ctx.db.product.findFirst({
+  update: protectedProcedure
+    .input(productCreateInput)
+    .mutation(async ({ ctx, input }) => {
+      const { categoryId, supplierId, id, ..._input } = input;
+      return await ctx.db.product.update({
+        where: { id: id },
+        data: {
+          ..._input,
+          // supplier: { connect: { id: supplierId } },
+          category: { connect: { id: categoryId } }
+        }
+      });
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.product.delete({ where: { id: input.id } });
+    }),
+
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const products = await ctx.db.product.findMany({
       orderBy: { createdAt: 'desc' }
       // where: { createdBy: { id: ctx.session.user.id } }
     });
 
-    return product ?? null;
+    return products ?? null;
   }),
 
   getById: publicProcedure
