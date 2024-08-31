@@ -6,10 +6,10 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { DataTable } from './_components/data-table';
 import { columns } from './_components/columts';
 import { api } from '@/trpc/server';
 import { Heading } from '@/components/ui/heading';
+import { DataTable } from '@/components/form/data-table';
 
 // const breadcrumbItems = [{ title: 'Inventory', link: '/admin/inventory' }];
 
@@ -19,13 +19,12 @@ interface paramsProps {
 
 export default async function Page({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
-  const pageLimit = Number(searchParams.limit) || 10;
-  const data = await api.product.getAll();
-  const total = data.length;
-
-  // if (error) {
-  //   return <div className="text-red-500">{error.message}</div>;
-  // }
+  const pageLimit = Number(searchParams.limit) || 5;
+  const data = await api.product.getMany({
+    limit: pageLimit,
+    page: page
+  });
+  const total = data.total;
 
   return (
     <PageContainer scrollable>
@@ -47,12 +46,11 @@ export default async function Page({ searchParams }: paramsProps) {
         </div>
         <Separator />
 
-        {/* <DataTable columns={columns} data={products || []} searchKey="name" /> */}
-
         <DataTable
           columns={columns}
-          data={data ?? []}
-          offset={pageLimit}
+          data={data.products ?? []}
+          page={page}
+          limit={pageLimit}
           totalProducts={total}
         />
       </div>

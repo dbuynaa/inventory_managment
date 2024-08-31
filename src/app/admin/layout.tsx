@@ -1,8 +1,5 @@
-import { Header, Sidebar } from '@/components/layout';
+import { Header, PageContainer, Sidebar } from '@/components/layout';
 import type { Metadata } from 'next';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { Suspense } from 'react';
-import Loading from './loading';
 
 export const metadata: Metadata = {
   title: 'Next Shadcn Dashboard Starter',
@@ -17,9 +14,9 @@ export default async function AdminLayout({
   return (
     <div className="flex">
       <Sidebar />
-      <main className="w-full flex-1 overflow-hidden">
+      <main className="w-full flex-1 overflow-hidden bg-muted/30">
         <Header />
-        {children}
+        <PageContainer scrollable>{children}</PageContainer>
       </main>
     </div>
   );

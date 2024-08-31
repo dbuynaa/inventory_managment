@@ -2,8 +2,13 @@
 
 import {
   type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
   useReactTable
 } from '@tanstack/react-table';
 
@@ -17,38 +22,63 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { useSearch } from '@/hooks/useSearch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import React from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  offset: number;
+  page: number;
+  limit: number;
   totalProducts: number;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  offset,
+  page = 1,
+  limit = 5,
   totalProducts
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+
+    onSortingChange: setSorting,
+
+    state: {
+      sorting
+    }
   });
-  const router = useRouter();
-  const productsPerPage = 5;
+  const { setParam } = useSearch();
 
   function prevPage() {
-    router.back();
+    if (page > 1) {
+      setParam('page', `${page - 1}`);
+    }
   }
 
   function nextPage() {
-    router.push(`?offset=${offset}`, { scroll: false });
+    const maxPage = Math.ceil(totalProducts / limit);
+    if (page < maxPage) {
+      setParam('page', `${page + 1}`);
+    }
   }
-
+  function handleLimitChange(newLimit: string) {
+    setParam('limit', newLimit);
+  }
   return (
     <Card className="rounded-md border">
       <CardContent>
@@ -101,38 +131,39 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </CardContent>
-      <CardFooter>
-        <form className="flex items-center w-full justify-between">
-          <div className="text-xs text-muted-foreground">
-            Showing{' '}
-            <strong>
-              {Math.min(offset - productsPerPage, totalProducts) + 1}-{offset}
-            </strong>{' '}
-            of <strong>{totalProducts}</strong> products
-          </div>
-          <div className="flex">
-            <Button
-              formAction={prevPage}
-              variant="ghost"
-              size="sm"
-              type="submit"
-              disabled={offset === productsPerPage}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Prev
-            </Button>
-            <Button
-              formAction={nextPage}
-              variant="ghost"
-              size="sm"
-              type="submit"
-              disabled={offset + productsPerPage > totalProducts}
-            >
-              Next
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </form>
+      <CardFooter className="flex justify-between items-center">
+        <Button variant="outline" onClick={prevPage} disabled={page <= 1}>
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Previous
+        </Button>
+        <span>
+          Page {page} of {Math.ceil(totalProducts / limit)}
+        </span>
+        <div className="flex items-center gap-2">
+          <Select
+            onValueChange={handleLimitChange}
+            value={`${limit}`}
+            defaultValue={`${limit}`}
+          >
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Items per page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            variant="outline"
+            onClick={nextPage}
+            disabled={page >= Math.ceil(totalProducts / limit)}
+          >
+            Next
+            <ChevronRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

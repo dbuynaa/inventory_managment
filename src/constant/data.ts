@@ -6,7 +6,6 @@ export interface NavItem {
   disabled?: boolean;
   external?: boolean;
   icon?: keyof typeof Icons;
-  label?: string;
   description?: string;
 }
 
@@ -124,19 +123,27 @@ export const navItems: NavItem[] = [
   {
     title: 'Dashboard',
     href: '/admin',
-    icon: 'dashboard',
-    label: 'Dashboard'
+    icon: 'dashboard'
   },
-  {
-    title: 'User',
-    href: '/admin/user',
-    icon: 'user',
-    label: 'user'
-  },
+
   {
     title: 'Inventory',
     href: '/admin/inventory',
-    icon: 'inventory',
-    label: 'inventory'
+    icon: 'inventory'
+  },
+  {
+    title: 'Order',
+    href: '/admin/order',
+    icon: 'order'
+  },
+  {
+    title: 'Supplier',
+    href: '/admin/supplier',
+    icon: 'truck'
+  },
+  {
+    title: 'Customer',
+    href: '/admin/user',
+    icon: 'user'
   }
 ];

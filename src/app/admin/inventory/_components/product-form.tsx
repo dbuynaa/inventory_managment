@@ -108,9 +108,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     name: initialData?.name ?? '',
     description: initialData?.description ?? '',
     price: initialData?.price ?? 0,
-    quantity: initialData?.quantity ?? 0,
+    costPrice: initialData?.costPrice ?? 0,
+    quantityOnStock: initialData?.quantityOnStock ?? 0,
     categoryId: initialData?.categoryId ?? ''
   };
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productCreateInput),
     defaultValues
@@ -141,7 +143,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         <Heading
           title={initialData?.id ? 'Update' : 'Create'}
           description={
-            initialData?.id ? 'Update product' : 'Create new product'
+            initialData?.id
+              ? 'Update product information'
+              : 'Create new product'
           }
         />
         {initialData?.id && (
@@ -180,22 +184,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 placeholder: 'Product description'
               }}
             />
-            <FormInput
-              form={form}
-              label="Price"
-              name="price"
-              inputProps={{
-                type: 'number',
-                disabled: loading
-              }}
-            />
-            <FormInput
-              form={form}
-              label="Quantity"
-              name="quantity"
-              inputProps={{ disabled: loading, type: 'number' }}
-            />
-
             <FormField
               control={form.control}
               name="categoryId"
@@ -227,6 +215,27 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <FormMessage />
                 </FormItem>
               )}
+            />
+            <FormInput
+              form={form}
+              label="Price"
+              name="price"
+              inputProps={{
+                type: 'number',
+                disabled: loading
+              }}
+            />
+            <FormInput
+              form={form}
+              label="Quantity"
+              name="quantityOnStock"
+              inputProps={{ disabled: loading, type: 'number' }}
+            />
+            <FormInput
+              form={form}
+              label="Cost Price"
+              name="costPrice"
+              inputProps={{ disabled: loading, type: 'number' }}
             />
           </div>
           <Button disabled={loading} className="ml-auto" type="submit">

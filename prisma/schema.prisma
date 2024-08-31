@@ -14,30 +14,29 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Order {
-    id         String      @id @default(uuid())
-    orderDate  DateTime    @default(now())
-    status     OrderStatus @default(PENDING)
-    total      Decimal
-    userId     String
-    user       User        @relation(fields: [userId], references: [id])
-    orderItems OrderItem[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model PurchaseOrder {
+    id                   String                @id @default(uuid())
+    orderDate            DateTime              @default(now())
+    expectedDeliveryDate DateTime
+    status               OrderStatus           @default(PENDING)
+    totalAmount          Float
+    supplierId           String
+    supplier             Supplier              @relation(fields: [supplierId], references: [id])
+    createdAt            DateTime              @default(now())
+    updatedAt            DateTime              @updatedAt
+    purchaseOrderDetails PurchaseOrderDetail[]
 }
 
-model OrderItem {
-    id        String  @id @default(uuid())
-    orderId   String
-    order     Order   @relation(fields: [orderId], references: [id])
-    productId String
-    product   Product @relation(fields: [productId], references: [id])
-    quantity  Int
-    price     Float
+model PurchaseOrderDetail {
+    id              String        @id @default(uuid())
+    quantityOrdered Int
+    pricePerUnit    Float
+    totalPrice      Float
+    purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+    purchaseOrderId String
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    product   Product? @relation(fields: [productId], references: [id])
+    productId String?
 }
 
 enum OrderStatus {
@@ -49,32 +48,32 @@ enum OrderStatus {
 }
 
 model Product {
-    id            String         @id @default(uuid())
+    id            String  @id @default(uuid())
     name          String
     description   String
-    price         Float
-    quantity      Int            @default(0)
-    productImages ProductImage[]
+    // quantity      Int            @default(0)
+    productImages String?
 
-    categoryId  String
-    category    Category    @relation(fields: [categoryId], references: [id])
-    supplierId  String?
-    supplier    Supplier?   @relation(fields: [supplierId], references: [id])
-    orderItems  OrderItem[]
+    price           Float
+    costPrice       Float
+    quantityOnStock Int?  @default(0)
+    reorderLevel    Int?  @default(0)
+
+    categoryId String
+    category   Category  @relation(fields: [categoryId], references: [id])
+    supplierId String?
+    supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
     createdById String
-    createdBy   User        @relation(fields: [createdById], references: [id])
+    createdBy   User     @relation(fields: [createdById], references: [id])
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
-model ProductImage {
-    id        String   @id @default(uuid())
-    url       String
-    productId String
-    product   Product  @relation(fields: [productId], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    salesDetail          SalesDetail[]
+    purchaseOrderDetails PurchaseOrderDetail[]
+    inventoryAdjustment  InventoryAdjustment[]
+    address              Address?              @relation(fields: [addressId], references: [id])
+    addressId            String?
 }
 
 model Category {
@@ -87,59 +86,81 @@ model Category {
 }
 
 model Supplier {
-    id        String   @id @default(uuid())
-    name      String
-    email     String   @unique
-    phone     String
-    addressId String
-    address   Address  @relation(fields: [addressId], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id          String   @id @default(uuid())
+    name        String
+    email       String?
+    phoneNumber String   @unique
+    // addressId   String?
+    // address     Address? @relation(fields: [addressId], references: [id])
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
     // Relations
-    products Product[]
+    products       Product[]
+    purchaseOrders PurchaseOrder[]
+}
+
+model Sale {
+    id             String        @id @default(uuid())
+    saleDate       DateTime      @default(now())
+    total_amount   Float
+    payment_method String
+    status         String
+    created_at     DateTime      @default(now())
+    salesDetails   SalesDetail[]
+}
+
+model SalesDetail {
+    id             String  @id @default(uuid())
+    quantity_sold  Int
+    price_per_unit Float
+    total_price    Float
+    sale           Sale    @relation(fields: [saleId], references: [id])
+    saleId         String
+    product        Product @relation(fields: [productId], references: [id])
+    productId      String
+}
+
+model InventoryAdjustment {
+    id               String         @id @default(uuid())
+    adjustmentType   AdjustmentType
+    quantityAdjusted Int
+    reason           String?
+    adjustedBy       User           @relation(fields: [userId], references: [id])
+    userId           String
+    product          Product        @relation(fields: [productId], references: [id])
+    productId        String
+    createdAt        DateTime?      @default(now())
+}
+
+enum AdjustmentType {
+    ADDED
+    REMOVED
+    ADJUSTED
+    WRITTEN_OFF
 }
 
 model Address {
-    id         String     @id @default(uuid())
+    id         String    @id @default(uuid())
     street     String
     city       String
     state      String
     postalCode String?
     country    String?
-    companies  Supplier[]
+    products   Product[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-// Necessary for Next auth
-// model Account {
-//     id                       String  @id @default(cuid())
-//     userId                   String
-//     type                     String
-//     provider                 String
-//     providerAccountId        String
-//     refresh_token            String? // @db.Text
-//     access_token             String? // @db.Text
-//     expires_at               Int?
-//     token_type               String?
-//     scope                    String?
-//     id_token                 String? // @db.Text
-//     session_state            String?
-//     user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-//     refresh_token_expires_in Int?
-
-//     @@unique([provider, providerAccountId])
-// }
-
-// model Session {
-//     id           String   @id @default(cuid())
-//     sessionToken String   @unique
-//     userId       String
-//     expires      DateTime
-//     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-// }
+model Customer {
+    id         String   @id @default(cuid())
+    name       String
+    email      String?
+    phone      String   @unique
+    address    String
+    created_at DateTime @default(now())
+}
 
 model User {
     id            String    @id @default(cuid())
@@ -149,23 +170,13 @@ model User {
     phoneVerified DateTime?
     image         String?
 
-    // accounts Account[]
-    // sessions Session[]
-    role    UserRole  @default(CUSTOMER)
-    orders  Order[]
-    product Product[]
+    role                UserRole              @default(ADMIN)
+    product             Product[]
+    inventoryAdjustment InventoryAdjustment[]
 }
 
-// model VerificationToken {
-//     identifier String
-//     token      String   @unique
-//     expires    DateTime
-
-//     @@unique([identifier, token])
-// }
-
 enum UserRole {
-    SUPERADMIN
     ADMIN
-    CUSTOMER
+    MANAGER
+    STAFF
 }

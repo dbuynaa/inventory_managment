@@ -53,7 +53,7 @@ async function seedUser() {
     {
       name: 'Bob',
       phoneNumber: '88558855',
-      role: 'CUSTOMER',
+      role: 'MANAGER',
       password: 'a123456'
     }
   ];
@@ -87,11 +87,11 @@ async function seedUser() {
   console.log('Seeding completed');
 }
 
-async function seed() {
+async function main() {
   await seedUser();
   await seedCategory();
 }
-seed()
+main()
   .catch((e) => {
     console.error(e);
     process.exit(1);

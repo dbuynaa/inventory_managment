@@ -3,7 +3,6 @@ import {
   ArrowDown,
   ArrowRight,
   ArrowUp,
-  BoxesIcon,
   Check,
   Command,
   HelpCircle,
@@ -15,14 +14,18 @@ import {
   type LucideProps,
   Moon,
   MoreVertical,
+  Package,
   PencilLine,
   Pizza,
   Plus,
   Search,
   Send,
+  ShoppingCart,
   SunMedium,
   Trash,
+  TruckIcon,
   User,
+  User2,
   User2Icon,
   X
 } from 'lucide-react';
@@ -31,7 +34,7 @@ export type Icon = LucideIcon;
 
 export const Icons = {
   dashboard: LayoutDashboardIcon,
-  inventory: BoxesIcon,
+  inventory: Package,
   logo: Command,
   login: LogIn,
   close: X,
@@ -42,7 +45,8 @@ export const Icons = {
   edit: PencilLine,
   delete: Trash,
   warning: AlertTriangle,
-  user: User,
+  user: User2,
+  truck: TruckIcon,
   arrowRight: ArrowRight,
   arrowUp: ArrowUp,
   arrowDown: ArrowDown,
@@ -51,6 +55,7 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  order: ShoppingCart,
   send: Send,
   search: Search,
   google: ({ ...props }: LucideProps) => (

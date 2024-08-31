@@ -8,11 +8,12 @@ import Link from 'next/link';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-// type Product =ProductType  {
+type ProductShape = Pick<
+  Product,
+  'id' | 'name' | 'price' | 'quantityOnStock' | 'createdAt'
+>;
 
-// } ;
-
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<ProductShape>[] = [
   {
     accessorKey: 'name',
     header: 'Name'
@@ -22,7 +23,7 @@ export const columns: ColumnDef<Product>[] = [
     header: 'Price'
   },
   {
-    accessorKey: 'quantity',
+    accessorKey: 'quantityOnStock',
     header: 'Quantity'
   },
   {
