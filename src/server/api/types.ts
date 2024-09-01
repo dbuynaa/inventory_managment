@@ -1,3 +1,4 @@
+import { AdjustmentType } from '@prisma/client';
 import { z } from 'zod';
 export const loginSchema = z.object({
   phoneNumber: z.string().min(1, { message: 'Phone number is required' }),
@@ -25,5 +26,14 @@ export const supplierCreateInput = z.object({
     .string()
     .min(3, { message: 'Product Name must be at least 3 characters' }),
   phoneNumber: z.string().min(1, { message: 'Phone number is required' }),
-  email: z.string().email('Invalid email address')
+  email: z.string().email('Invalid email address').optional()
+});
+
+export const adjustmentCreateInput = z.object({
+  productId: z.string(),
+  quantityAdjusted: z.coerce.number().min(1, {
+    message: 'Quantity adjusted must be at least 1'
+  }),
+  reason: z.string(),
+  adjustmentType: z.nativeEnum(AdjustmentType)
 });

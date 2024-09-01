@@ -1,7 +1,8 @@
 'use client';
 
 import { Icons } from '@/components/icons';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { type Product } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
@@ -10,10 +11,12 @@ import Link from 'next/link';
 // You can use a Zod schema here if you want.
 type ProductShape = Pick<
   Product,
-  'id' | 'name' | 'price' | 'quantityOnStock' | 'createdAt'
+  'id' | 'name' | 'price' | 'costPrice' | 'quantityOnStock' | 'createdAt'
 >;
 
-export const columns: ColumnDef<ProductShape>[] = [
+export const columns = (
+  handleEditClick: ({ product }: { product: Product }) => void
+): ColumnDef<Product>[] => [
   {
     accessorKey: 'name',
     header: 'Name'
@@ -21,6 +24,10 @@ export const columns: ColumnDef<ProductShape>[] = [
   {
     accessorKey: 'price',
     header: 'Price'
+  },
+  {
+    accessorKey: 'costPrice',
+    header: 'Cost Price'
   },
   {
     accessorKey: 'quantityOnStock',
@@ -37,14 +44,22 @@ export const columns: ColumnDef<ProductShape>[] = [
     maxSize: 40,
     cell: ({ row }) => {
       return (
-        <Link
-          key={row.original.id}
-          href={`/admin/inventory/${row.original.id}`}
-        >
-          <Button variant="ghost" size={'sm'}>
-            <Icons.edit className="h-4 w-4" />
+        <>
+          <Link
+            key={row.original.id}
+            href={`/admin/inventory/${row.original.id}`}
+            className={cn(buttonVariants({ variant: 'ghost' }))}
+          >
+            <Icons.edit className="h-5 w-5" />
+          </Link>
+          <Button
+            onClick={() => handleEditClick({ product: row.original })}
+            variant="ghost"
+            size={'sm'}
+          >
+            <Icons.adjust className="h-5 w-5" />
           </Button>
-        </Link>
+        </>
       );
     }
   }

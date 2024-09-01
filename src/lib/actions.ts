@@ -1,8 +1,9 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { supplierCreateInput } from '@/server/api/types';
+import { adjustmentCreateInput, supplierCreateInput } from '@/server/api/types';
 import { api } from '@/trpc/server';
+import { TRPCError } from '@trpc/server';
 import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 
@@ -32,12 +33,16 @@ export async function createOrUpdateSupplier(
   formData: FormData
 ) {
   const validatedFields = supplierCreateInput.safeParse({
-    ...Object.fromEntries(formData.entries())
+    // ...Object.fromEntries(formData.entries())
+    id: formData.get('id'),
+    name: formData.get('name'),
+    phoneNumber: formData.get('phoneNumber'),
+    email: formData.get('email')
   });
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Failed to create/update supplier.',
+      message: `${validatedFields.error.message}.`,
       success: false
     };
     // return 'Failed to create/update supplier.';
@@ -46,7 +51,7 @@ export async function createOrUpdateSupplier(
   const { id, ...supplierData } = data;
   try {
     if (id) {
-      await api.supplier.update(supplierData);
+      await api.supplier.update(data);
     } else {
       await api.supplier.create(supplierData);
     }
@@ -65,24 +70,61 @@ export async function createOrUpdateSupplier(
   }
 }
 export async function deleteSupplier(id: string | undefined) {
-  // const id = formData.get('id');
   if (!id) {
+    throw new Error('Supplier not found.');
+  }
+  try {
+    await api.supplier.delete({ id: id });
+    revalidatePath('/supplier');
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      return {
+        message: error.message,
+        success: false
+      };
+    }
     return {
       message: 'Failed to delete supplier.',
       success: false
     };
   }
+}
+
+export async function adjustmentCreateAction(
+  prevState: unknown,
+  formData: FormData
+) {
+  const validatedFields = adjustmentCreateInput.safeParse(
+    {
+      adjustmentType: formData.get('adjustmentType'),
+      productId: formData.get('productId'),
+      quantityAdjusted: formData.get('quantityAdjusted'),
+      reason: formData.get('reason')
+      // ...Object.fromEntries(formData.entries())
+    }
+    //
+  );
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      // message: `${validatedFields.error.message}.`,
+      message: `${validatedFields.error.message}.`,
+      success: false
+    };
+  }
+  const data = validatedFields.data;
   try {
-    await api.supplier.delete({ id: id });
+    await api.product.productAdjustment(data);
     revalidatePath('/supplier');
     return {
-      message: 'Supplier deleted successfully.',
+      message: `Adjustemnt created successfully.`,
       success: true
     };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return {
-      message: 'Failed to delete supplier.',
-      success: false
+      message: `Adjustemnt created successfully.`,
+      success: true
     };
   }
 }

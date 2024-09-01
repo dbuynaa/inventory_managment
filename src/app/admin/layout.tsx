@@ -2,7 +2,7 @@ import { Header, PageContainer, Sidebar } from '@/components/layout';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn Dashboard Starter',
+  title: 'Admin',
   description: 'Basic admin with Next.js and Shadcn'
 };
 

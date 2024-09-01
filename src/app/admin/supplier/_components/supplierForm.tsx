@@ -35,11 +35,14 @@ export default function SupplierForm({
   );
   const form = useForm<SupplierFormData>({
     resolver: zodResolver(supplierCreateInput),
-    defaultValues: initialData ?? {
-      name: '',
-      phoneNumber: '',
-      email: ''
-    }
+    defaultValues: initialData?.id
+      ? initialData
+      : {
+          id: '',
+          name: '',
+          phoneNumber: '',
+          email: ''
+        }
   });
   useEffect(() => {
     if (state?.success) {
@@ -51,6 +54,22 @@ export default function SupplierForm({
   return (
     <Form {...form}>
       <form action={formAction} className="space-y-6">
+        {initialData?.id && (
+          <FormField
+            control={form.control}
+            name="id"
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormLabel>ID</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter supplier ID" {...field} readOnly />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         <FormField
           control={form.control}
           name="name"

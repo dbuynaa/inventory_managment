@@ -5,7 +5,9 @@ import {
   protectedProcedure,
   publicProcedure
 } from '@/server/api/trpc';
-import { productCreateInput } from '../types';
+import { adjustmentCreateInput, productCreateInput } from '../types';
+import { AdjustmentType } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 
 export const productRouter = createTRPCRouter({
   create: protectedProcedure
@@ -66,5 +68,34 @@ export const productRouter = createTRPCRouter({
         where: { id: input.id }
       });
       return product ?? null;
+    }),
+
+  productAdjustment: protectedProcedure
+    .input(adjustmentCreateInput)
+    .mutation(async ({ ctx, input }) => {
+      const check = await ctx.db.product.findUnique({
+        where: { id: input.productId }
+      });
+
+      if (!check)
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Product not found'
+        });
+
+      return await ctx.db.product.update({
+        where: { id: input.productId },
+        data: {
+          quantityOnStock: { increment: input.quantityAdjusted },
+          inventoryAdjustment: {
+            create: {
+              reason: input.reason,
+              quantityAdjusted: input.quantityAdjusted,
+              adjustmentType: input.adjustmentType,
+              adjustedBy: { connect: { id: ctx.session.user.id } }
+            }
+          }
+        }
+      });
     })
 });

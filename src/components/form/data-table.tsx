@@ -69,7 +69,6 @@ export function DataTable<TData, TValue>({
       setParam('page', `${page - 1}`);
     }
   }
-
   function nextPage() {
     const maxPage = Math.ceil(totalProducts / limit);
     if (page < maxPage) {

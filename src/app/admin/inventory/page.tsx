@@ -1,21 +1,15 @@
-// 'use client';
-
-import { PageContainer } from '@/components/layout';
-import { buttonVariants } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
-import { columns } from './_components/columts';
 import { api } from '@/trpc/server';
-import { Heading } from '@/components/ui/heading';
-import { DataTable } from '@/components/form/data-table';
-
-// const breadcrumbItems = [{ title: 'Inventory', link: '/admin/inventory' }];
+import { type Metadata } from 'next';
+import InventoryContainer from './_components/inventory-container';
 
 interface paramsProps {
   searchParams: Record<string, string | string[] | undefined>;
 }
+
+export const metadata: Metadata = {
+  title: 'Inventory',
+  description: 'Admin inventory page'
+};
 
 export default async function Page({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
@@ -27,33 +21,10 @@ export default async function Page({ searchParams }: paramsProps) {
   const total = data.total;
 
   return (
-    <PageContainer scrollable>
-      <div className="space-y-4">
-        {/* <Breadcrumbs items={breadcrumbItems} /> */}
-
-        <div className="flex items-start justify-between">
-          <Heading
-            title={`Total Products (${total})`}
-            description="Manage employees (Server side table functionalities.)"
-          />
-
-          <Link
-            href={'/admin/inventory/new'}
-            className={cn(buttonVariants({ variant: 'default' }))}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add New
-          </Link>
-        </div>
-        <Separator />
-
-        <DataTable
-          columns={columns}
-          data={data.products ?? []}
-          page={page}
-          limit={pageLimit}
-          totalProducts={total}
-        />
-      </div>
-    </PageContainer>
+    <InventoryContainer
+      data={data.products}
+      total={total}
+      searchParams={searchParams}
+    />
   );
 }

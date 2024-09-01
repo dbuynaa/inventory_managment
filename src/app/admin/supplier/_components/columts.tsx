@@ -9,52 +9,51 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-type Shape = Pick<
-  Supplier,
-  'id' | 'name' | 'email' | 'phoneNumber' | 'createdAt'
->;
+// type Shape = Pick<
+//   Supplier,
+//   'id' | 'name' | 'email' | 'phoneNumber' | 'createdAt'
+// >;
 
-export const columns: ColumnDef<Shape>[] = [
+export const columns = (
+  handleEditClick: ({ supplier }: { supplier: Supplier }) => void
+): ColumnDef<Supplier>[] => [
   {
     accessorKey: 'name',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
+        <div
+          className="cursor-pointer flex items-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Name
           <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
+        </div>
       );
     },
     accessorFn: (row) => row.name
-  },
-  {
-    accessorKey: 'phoneNumber',
-    header: 'Phone'
   },
   {
     accessorKey: 'email',
     header: 'Email'
   },
   {
+    accessorKey: 'phoneNumber',
+    header: 'Phone'
+  },
+
+  {
     accessorKey: 'createdAt',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Created At
-          <CaretSortIcon
-            className={`ml-2 h-4 w-4 ${column.getIsSorted() === 'asc' ? 'text-foreground' : ''}`}
-          />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <div
+        className="cursor-pointer flex items-center"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Created At
+        <CaretSortIcon className="ml-2 h-4 w-4" />
+      </div>
+    ),
     accessorFn: (row) => row.createdAt,
-    cell: ({ row }) => row.original.createdAt.toLocaleDateString()
+    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString()
   },
 
   {
@@ -62,15 +61,24 @@ export const columns: ColumnDef<Shape>[] = [
     header: 'Actions',
     cell: ({ row }) => {
       return (
-        <Button
-          onClick={() => deleteSupplier(row.original.id)}
-          key={row.original.id}
-          id={row.original.id}
-          size={'sm'}
-          variant="ghost"
-        >
-          <Icons.delete className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => deleteSupplier(row.original.id)}
+            key={row.original.id}
+            size={'sm'}
+            variant="ghost"
+          >
+            <Icons.delete className="h-4 w-4" />
+          </Button>
+          <Button
+            onClick={() => handleEditClick({ supplier: row.original })}
+            key={row.original.id + '-edit'}
+            variant="ghost"
+            size={'sm'}
+          >
+            <Icons.edit className="h-4 w-4" />
+          </Button>
+        </div>
       );
     }
   }

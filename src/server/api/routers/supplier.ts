@@ -6,6 +6,7 @@ import {
   publicProcedure
 } from '@/server/api/trpc';
 import { supplierCreateInput } from '../types';
+import { TRPCError } from '@trpc/server';
 
 export const supplierRouter = createTRPCRouter({
   create: protectedProcedure
@@ -25,6 +26,16 @@ export const supplierRouter = createTRPCRouter({
     .input(supplierCreateInput)
     .mutation(async ({ ctx, input }) => {
       const { id, ..._input } = input;
+      const check = await ctx.db.supplier.findUnique({
+        where: { id: id }
+      });
+
+      if (!check) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Supplier not found'
+        });
+      }
       return await ctx.db.supplier.update({
         where: { id: id },
         data: _input
@@ -34,6 +45,16 @@ export const supplierRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const check = await ctx.db.supplier.findUnique({
+        where: { id: input.id }
+      });
+
+      if (!check) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Supplier not found'
+        });
+      }
       return await ctx.db.supplier.delete({ where: { id: input.id } });
     }),
 
