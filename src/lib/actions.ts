@@ -1,11 +1,16 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { adjustmentCreateInput, supplierCreateInput } from '@/server/api/types';
+import {
+  productCreateInput,
+  type adjustmentCreateInput,
+  type supplierCreateInput
+} from '@/server/api/types';
 import { api } from '@/trpc/server';
 import { TRPCError } from '@trpc/server';
 import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+import { type z } from 'zod';
 
 // ...
 
@@ -29,29 +34,12 @@ export async function authenticate(
 }
 
 export async function createOrUpdateSupplier(
-  prevState: unknown,
-  formData: FormData
+  formData: z.infer<typeof supplierCreateInput>
 ) {
-  const validatedFields = supplierCreateInput.safeParse({
-    // ...Object.fromEntries(formData.entries())
-    id: formData.get('id'),
-    name: formData.get('name'),
-    phoneNumber: formData.get('phoneNumber'),
-    email: formData.get('email')
-  });
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: `${validatedFields.error.message}.`,
-      success: false
-    };
-    // return 'Failed to create/update supplier.';
-  }
-  const data = validatedFields.data;
-  const { id, ...supplierData } = data;
+  const { id, ...supplierData } = formData;
   try {
     if (id) {
-      await api.supplier.update(data);
+      await api.supplier.update(formData);
     } else {
       await api.supplier.create(supplierData);
     }
@@ -89,30 +77,59 @@ export async function deleteSupplier(id: string | undefined) {
     };
   }
 }
-
-export async function adjustmentCreateAction(
-  prevState: unknown,
-  formData: FormData
-) {
-  const validatedFields = adjustmentCreateInput.safeParse(
-    {
-      adjustmentType: formData.get('adjustmentType'),
-      productId: formData.get('productId'),
-      quantityAdjusted: formData.get('quantityAdjusted'),
-      reason: formData.get('reason')
-      // ...Object.fromEntries(formData.entries())
+export async function deleteProduct(id: string | undefined) {
+  if (!id) {
+    throw new Error('Supplier not found.');
+  }
+  try {
+    await api.product.delete({ id: id });
+    revalidatePath('/inventory');
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      return {
+        message: error.message,
+        success: false
+      };
     }
-    //
-  );
-  if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      // message: `${validatedFields.error.message}.`,
-      message: `${validatedFields.error.message}.`,
+      message: 'Failed to delete supplier.',
       success: false
     };
   }
-  const data = validatedFields.data;
+}
+
+export async function createProductOrUpdateAction(
+  data: z.infer<typeof productCreateInput>
+) {
+  try {
+    if (data.id) {
+      await api.product.update(data);
+    } else {
+      await api.product.create(data);
+    }
+    revalidatePath('/inventory');
+    return {
+      message: `Product created successfully.`,
+      success: true
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    if (error instanceof TRPCError)
+      return {
+        message: error.message,
+        success: false
+      };
+
+    return {
+      message: 'Database Error: Failed to create/update product.',
+      success: false
+    };
+  }
+}
+
+export async function adjustmentCreateAction(
+  data: z.infer<typeof adjustmentCreateInput>
+) {
   try {
     await api.product.productAdjustment(data);
     revalidatePath('/supplier');

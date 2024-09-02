@@ -1,10 +1,7 @@
 'use client';
 import type * as z from 'zod';
-import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Trash } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -14,7 +11,6 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Separator } from '@/components/ui/separator';
 import {
   Select,
   SelectContent,
@@ -22,87 +18,35 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { type Category, type Product } from '@prisma/client';
+import { type Product } from '@prisma/client';
 import { api } from '@/trpc/react';
 import { useToast } from '@/components/ui/use-toast';
-import { AlertModal } from '@/components/modal/alert-modal';
-import { Heading } from '@/components/ui/heading';
 import { productCreateInput } from '@/server/api/types';
 import { FormInput } from '@/components/form/form-item';
-export const IMG_MAX_LIMIT = 3;
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { createProductOrUpdateAction } from '@/lib/actions';
+import { useState } from 'react';
 
 type ProductFormValues = z.infer<typeof productCreateInput>;
 
 interface ProductFormProps {
   initialData: Product | null;
-  categories: Category[];
+  onComplete?: () => void;
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
-  categories
+  onComplete
 }) => {
-  const router = useRouter();
-  const utils = api.useUtils();
+  const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
-  const [open, setOpen] = useState(false);
   const action = initialData ? 'Save changes' : 'Create';
 
-  const { mutate: deleteProduct, isPending: deleteLoading } =
-    api.product.delete.useMutation({
-      onSuccess: () => {
-        toast({
-          title: 'Product deleted.'
-        });
-      },
-      onSettled: async () => {
-        setOpen(false);
-        await utils.product.invalidate();
-        router.push('/admin/inventory');
-      },
-      onError: (message) => {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: message.message
-        });
-      }
-    });
-
-  const { mutate: createProduct, isPending: loadingCreate } =
-    api.product.create.useMutation({
-      onSuccess: () => {
-        toast({
-          title: 'Product created.'
-        });
-      },
-      onSettled: async () => {
-        router.push('/admin/inventory');
-        await utils.product.invalidate();
-      },
-      onError: (message) => {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: message.message
-        });
-      }
-    });
-
-  const { mutate: updateProduct, isPending: loadingUpdate } =
-    api.product.update.useMutation({
-      onSuccess: () => toast({ title: 'Product updated.' }),
-      onSettled: async () => {
-        await utils.product.invalidate();
-        router.push('/admin/inventory');
-      },
-      onError: (message) =>
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: message.message
-        })
-    });
+  const { data: suppliers } = api.supplier.getMany.useQuery({
+    limit: 100,
+    page: 1
+  });
+  const { data: categories } = api.category.getAll.useQuery();
 
   const defaultValues: ProductFormValues = {
     name: initialData?.name ?? '',
@@ -110,7 +54,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     price: initialData?.price ?? 0,
     costPrice: initialData?.costPrice ?? 0,
     quantityOnStock: initialData?.quantityOnStock ?? 0,
-    categoryId: initialData?.categoryId ?? ''
+    categoryId: initialData?.categoryId ?? '',
+    reorderLevel: initialData?.reorderLevel ?? 0,
+    supplierId: initialData?.supplierId ?? ''
   };
 
   const form = useForm<ProductFormValues>({
@@ -119,59 +65,42 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   });
 
   const onSubmit = async (data: ProductFormValues) => {
-    if (initialData?.id) {
-      updateProduct({ ...data, id: initialData?.id });
-    } else createProduct(data);
-  };
+    setIsPending(true);
+    const { success, message } = await createProductOrUpdateAction({
+      ...data,
+      id: initialData?.id
+    });
+    if (success) {
+      toast({
+        title: 'Success',
+        description: message
+      });
+    } else {
+      toast({
+        title: 'Error',
+        description: message
+      });
+    }
 
-  const onDelete = () => {
-    if (!initialData?.id) return;
-    deleteProduct({ id: initialData.id });
+    form.reset();
+    onComplete?.();
+    setIsPending(false);
   };
-
-  const loading = loadingCreate || loadingUpdate || deleteLoading;
 
   return (
-    <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={deleteLoading}
-      />
-      <div className="flex items-center justify-between">
-        <Heading
-          title={initialData?.id ? 'Update' : 'Create'}
-          description={
-            initialData?.id
-              ? 'Update product information'
-              : 'Create new product'
-          }
-        />
-        {initialData?.id && (
-          <Button
-            disabled={deleteLoading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-      <Separator />
+    <ScrollArea>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-8"
         >
-          <div className="gap-8 md:grid md:grid-cols-3">
+          <div className="gap-8 md:grid md:grid-cols-2">
             <FormInput
               form={form}
               label="Name"
               name="name"
               inputProps={{
-                disabled: loading,
+                disabled: isPending,
                 placeholder: 'Product name'
               }}
             />
@@ -180,7 +109,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               label="Description"
               name="description"
               inputProps={{
-                disabled: loading,
+                disabled: isPending,
                 placeholder: 'Product description'
               }}
             />
@@ -191,7 +120,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <FormItem>
                   <FormLabel>Category</FormLabel>
                   <Select
-                    disabled={loading}
+                    disabled={isPending}
                     onValueChange={field.onChange}
                     value={field.value}
                     defaultValue={field.value}
@@ -205,9 +134,41 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category) => (
+                      {categories?.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="supplierId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Supplier</FormLabel>
+                  <Select
+                    disabled={isPending}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a supplier"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {suppliers?.data.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -222,27 +183,33 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="price"
               inputProps={{
                 type: 'number',
-                disabled: loading
+                disabled: isPending
               }}
             />
             <FormInput
               form={form}
               label="Quantity"
               name="quantityOnStock"
-              inputProps={{ disabled: loading, type: 'number' }}
+              inputProps={{ disabled: isPending, type: 'number' }}
             />
             <FormInput
               form={form}
               label="Cost Price"
               name="costPrice"
-              inputProps={{ disabled: loading, type: 'number' }}
+              inputProps={{ disabled: isPending, type: 'number' }}
+            />
+            <FormInput
+              form={form}
+              label="Reorder Level"
+              name="reorderLevel"
+              inputProps={{ disabled: isPending, type: 'number' }}
             />
           </div>
-          <Button disabled={loading} className="ml-auto" type="submit">
+          <Button disabled={isPending} className="ml-auto" type="submit">
             {action}
           </Button>
         </form>
       </Form>
-    </>
+    </ScrollArea>
   );
 };

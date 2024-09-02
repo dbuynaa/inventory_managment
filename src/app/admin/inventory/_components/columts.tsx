@@ -1,6 +1,7 @@
 'use client';
 
 import { Icons } from '@/components/icons';
+import { AlertModal } from '@/components/modal/alert-modal';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { type Product } from '@prisma/client';
@@ -15,7 +16,8 @@ type ProductShape = Pick<
 >;
 
 export const columns = (
-  handleEditClick: ({ product }: { product: Product }) => void
+  handleEditClick: ({ product }: { product: Product }) => void,
+  handleDeleteClick: ({ id }: { id: string }) => void
 ): ColumnDef<Product>[] => [
   {
     accessorKey: 'name',
@@ -40,7 +42,9 @@ export const columns = (
   },
   {
     accessorKey: 'id',
-    header: 'Actions',
+    header: () => {
+      return <div className="pl-4">Actions</div>;
+    },
     maxSize: 40,
     cell: ({ row }) => {
       return (
@@ -50,7 +54,7 @@ export const columns = (
             href={`/admin/inventory/${row.original.id}`}
             className={cn(buttonVariants({ variant: 'ghost' }))}
           >
-            <Icons.edit className="h-5 w-5" />
+            <Icons.details className="h-5 w-5" />
           </Link>
           <Button
             onClick={() => handleEditClick({ product: row.original })}
@@ -58,6 +62,16 @@ export const columns = (
             size={'sm'}
           >
             <Icons.adjust className="h-5 w-5" />
+          </Button>
+          <Button
+            // formAction={async () => {
+            //   deleteProduct
+            // }}
+            onClick={() => handleDeleteClick({ id: row.original.id })}
+            variant="ghost"
+            size={'sm'}
+          >
+            <Icons.delete className="h-5 w-5" />
           </Button>
         </>
       );

@@ -16,8 +16,9 @@ export const productCreateInput = z.object({
   price: z.coerce.number(),
   costPrice: z.coerce.number(),
   quantityOnStock: z.coerce.number(),
+  reorderLevel: z.coerce.number(),
   categoryId: z.string().min(1, { message: 'Please select a category' }),
-  supplierId: z.string().optional()
+  supplierId: z.string().min(1, { message: 'Please select a supplier' })
 });
 
 export const supplierCreateInput = z.object({
@@ -31,9 +32,7 @@ export const supplierCreateInput = z.object({
 
 export const adjustmentCreateInput = z.object({
   productId: z.string(),
-  quantityAdjusted: z.coerce.number().min(1, {
-    message: 'Quantity adjusted must be at least 1'
-  }),
-  reason: z.string(),
-  adjustmentType: z.nativeEnum(AdjustmentType)
+  quantityAdjusted: z.coerce.number(),
+  reason: z.string()
+  // adjustmentType: z.enum(AdjustmentType.ADJUSTED, )
 });

@@ -1,4 +1,4 @@
-import { type Category, PrismaClient, type UserRole } from '@prisma/client';
+import { PrismaClient, type UserRole } from '@prisma/client';
 import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient();

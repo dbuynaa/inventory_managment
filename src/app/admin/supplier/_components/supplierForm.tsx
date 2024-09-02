@@ -14,9 +14,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { supplierCreateInput } from '@/server/api/types';
-import { useFormState } from 'react-dom';
 import { createOrUpdateSupplier } from '@/lib/actions';
-import { useEffect } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import { useState } from 'react';
 
 type SupplierFormData = z.infer<typeof supplierCreateInput>;
 
@@ -29,10 +29,8 @@ export default function SupplierForm({
   initialData,
   onSuccess
 }: SupplierFormProps) {
-  const [state, formAction, isPending] = useFormState(
-    createOrUpdateSupplier,
-    null
-  );
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   const form = useForm<SupplierFormData>({
     resolver: zodResolver(supplierCreateInput),
     defaultValues: initialData?.id
@@ -44,32 +42,27 @@ export default function SupplierForm({
           email: ''
         }
   });
-  useEffect(() => {
-    if (state?.success) {
-      if (onSuccess) onSuccess();
+  async function onSubmit(data: SupplierFormData) {
+    setLoading(true);
+    const res = await createOrUpdateSupplier({
+      ...data,
+      id: initialData?.id
+    });
+    if (res.success) {
+      setLoading(false);
+      toast({
+        title: res.message,
+        description: 'Supplier saved successfully',
+        variant: 'default'
+      });
+      onSuccess?.();
       form.reset();
     }
-  }, [form, onSuccess, state?.success]);
+  }
 
   return (
     <Form {...form}>
-      <form action={formAction} className="space-y-6">
-        {initialData?.id && (
-          <FormField
-            control={form.control}
-            name="id"
-            render={({ field }) => (
-              <FormItem className="hidden">
-                <FormLabel>ID</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter supplier ID" {...field} readOnly />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -110,8 +103,8 @@ export default function SupplierForm({
             </FormItem>
           )}
         />
-        {state?.errors && <p className={'text-red-500'}>{state.message}</p>}
-        <Button disabled={isPending} type="submit">
+        {/* {state?.errors && <p className={'text-red-500'}>{state.message}</p>} */}
+        <Button disabled={loading} type="submit">
           {initialData ? 'Update Supplier' : 'Add Supplier'}
         </Button>
       </form>

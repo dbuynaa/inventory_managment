@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Admin inventory page'
 };
 
-export default async function Page({ searchParams }: paramsProps) {
+export default async function InventoryPage({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 5;
   const data = await api.product.getMany({

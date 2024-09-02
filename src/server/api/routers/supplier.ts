@@ -61,7 +61,7 @@ export const supplierRouter = createTRPCRouter({
   getMany: protectedProcedure
     .input(z.object({ limit: z.number(), page: z.number() }))
     .query(async ({ ctx, input }) => {
-      const supplier = await ctx.db.supplier.findMany({
+      const data = await ctx.db.supplier.findMany({
         orderBy: { createdAt: 'desc' },
         take: input.limit,
         skip: input.limit * (input.page - 1)
@@ -69,7 +69,7 @@ export const supplierRouter = createTRPCRouter({
 
       const total = await ctx.db.supplier.count();
 
-      return { supplier, total };
+      return { data, total };
     }),
 
   getById: publicProcedure

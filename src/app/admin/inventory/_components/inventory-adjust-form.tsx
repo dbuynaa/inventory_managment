@@ -5,8 +5,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -17,17 +16,12 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+import { useToast } from '@/components/ui/use-toast';
+import { adjustmentCreateAction } from '@/lib/actions';
 import { adjustmentCreateInput } from '@/server/api/types';
-import { api } from '@/trpc/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AdjustmentType, type Product } from '@prisma/client';
+import { type Product } from '@prisma/client';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { type z } from 'zod';
 
@@ -42,47 +36,38 @@ export default function InventoryAdjustForm({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { mutate, isPending } = api.product.productAdjustment.useMutation({
-    onSuccess: () => {
-      onOpenChange(false);
-      form.reset();
-    },
-    onSettled: async () => {
-      await api.useUtils().product.invalidate();
-    }
-  });
-  //   const [execute, state, isPending] = useActionState(
-  //     adjustmentCreateAction,
-  //     null
-  //   );
+  const [isPending, setIsPending] = useState(false);
+  const { toast } = useToast();
   const form = useForm<AdjustmentFormData>({
     resolver: zodResolver(adjustmentCreateInput),
     defaultValues: {
       productId: product.id,
-      adjustmentType: 'ADDED',
+      // adjustmentType: 'ADJUSTED',
       quantityAdjusted: 0,
       reason: ''
     }
   });
 
-  //   useEffect(() => {
-  //     if (state ==) {
-  //       onOpenChange(false);
-  //       form.reset();
-  //     }
-  //   }, [form, onOpenChange, state?.success]);
-
-  function onSubmit(data: AdjustmentFormData) {
-    mutate({
-      ...data,
-      productId: product.id
-    });
+  async function onSubmit(data: AdjustmentFormData) {
+    setIsPending(true);
+    const { success, message } = await adjustmentCreateAction(data);
+    if (success) {
+      toast({
+        title: 'Success',
+        description: message
+      });
+      onOpenChange(false);
+      form.reset();
+    } else {
+      toast({
+        title: 'Error',
+        description: message
+      });
+    }
+    setIsPending(false);
   }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Adjust</Button>
-      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Adjust Inventory for {product.name}</DialogTitle>
@@ -107,7 +92,7 @@ export default function InventoryAdjustForm({
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="adjustmentType"
               render={({ field }) => (
@@ -138,7 +123,7 @@ export default function InventoryAdjustForm({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <FormField
               control={form.control}
               name="reason"

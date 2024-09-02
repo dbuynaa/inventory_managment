@@ -17,16 +17,12 @@ export default async function Page({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 5;
 
-  const data = await api.supplier.getMany({
+  const { data, total } = await api.supplier.getMany({
     limit: pageLimit,
     page: page
   });
 
   return (
-    <SupplierContainer
-      data={data.supplier}
-      total={data.total}
-      searchParams={searchParams}
-    />
+    <SupplierContainer data={data} total={total} searchParams={searchParams} />
   );
 }

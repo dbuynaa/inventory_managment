@@ -1,11 +1,15 @@
-import { buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 import { Package } from 'lucide-react';
-import Link from 'next/link';
 
-export default function InventoryHeader({ total }: { total: number }) {
+export default function InventoryHeader({
+  total,
+  setProductDialogOpen
+}: {
+  total: number;
+  setProductDialogOpen: (open: boolean) => void;
+}) {
   // const [searchTerm, setSearchTerm] = useState('');
   return (
     <div className="flex items-start justify-between">
@@ -21,12 +25,13 @@ export default function InventoryHeader({ total }: { total: number }) {
           //   value={searchTerm}
           //   onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Link
-          href={'/admin/inventory/new'}
-          className={cn(buttonVariants({ variant: 'default' }))}
+        <Button
+          variant="default"
+          onClick={() => setProductDialogOpen(true)}
+          // className="w-full"
         >
           <Package className="mr-2 h-4 w-4" /> Add New Product
-        </Link>
+        </Button>
       </div>
     </div>
   );

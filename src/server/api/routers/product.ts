@@ -6,22 +6,44 @@ import {
   publicProcedure
 } from '@/server/api/trpc';
 import { adjustmentCreateInput, productCreateInput } from '../types';
-import { AdjustmentType } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+import { generateSKU } from '@/lib/utils';
 
 export const productRouter = createTRPCRouter({
   create: protectedProcedure
     .input(productCreateInput)
     .mutation(async ({ ctx, input }) => {
       const { categoryId, supplierId, ..._input } = input;
+
+      const checkCategory = await ctx.db.category.findUnique({
+        where: { id: categoryId }
+      });
+
+      if (!checkCategory) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Category not found'
+        });
+      }
+
+      const checkSupplier = await ctx.db.supplier.findUnique({
+        where: { id: supplierId }
+      });
+
+      if (!checkSupplier) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Supplier not found'
+        });
+      }
+
+      const sku = generateSKU(checkCategory.name, checkSupplier.name);
       return await ctx.db.product.create({
         data: {
-          costPrice: _input.costPrice,
-          description: _input.description,
-          name: _input.name,
-          price: _input.price,
-          supplier: supplierId ? { connect: { id: supplierId } } : undefined,
-          category: { connect: { id: categoryId } },
+          ..._input,
+          sku: sku,
+          supplier: { connect: { id: checkSupplier.id } },
+          category: { connect: { id: checkCategory.id } },
           createdBy: { connect: { id: ctx.session.user.id } }
         }
       });
@@ -67,7 +89,14 @@ export const productRouter = createTRPCRouter({
       const product = await ctx.db.product.findUnique({
         where: { id: input.id }
       });
-      return product ?? null;
+
+      if (!product) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Product not found'
+        });
+      }
+      return product;
     }),
 
   productAdjustment: protectedProcedure
@@ -83,19 +112,30 @@ export const productRouter = createTRPCRouter({
           message: 'Product not found'
         });
 
-      return await ctx.db.product.update({
-        where: { id: input.productId },
+      const product = await ctx.db.inventoryAdjustment.create({
         data: {
-          quantityOnStock: { increment: input.quantityAdjusted },
-          inventoryAdjustment: {
-            create: {
-              reason: input.reason,
-              quantityAdjusted: input.quantityAdjusted,
-              adjustmentType: input.adjustmentType,
-              adjustedBy: { connect: { id: ctx.session.user.id } }
-            }
-          }
+          reason: input.reason,
+          quantityAdjusted: input.quantityAdjusted,
+          adjustmentType: 'ADJUSTED',
+          product: { connect: { id: input.productId } },
+          adjustedBy: { connect: { id: ctx.session.user.id } }
         }
       });
+      await ctx.db.product.update({
+        where: { id: input.productId },
+        data: {
+          quantityOnStock: { increment: input.quantityAdjusted }
+        }
+      });
+
+      await ctx.db.inventoryLog.create({
+        data: {
+          product: { connect: { id: input.productId } },
+          quantityChange: input.quantityAdjusted,
+          changeType: 'ADJUSTED'
+        }
+      });
+
+      return product;
     })
 });
