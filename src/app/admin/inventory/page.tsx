@@ -1,6 +1,8 @@
 import { api } from '@/trpc/server';
 import { type Metadata } from 'next';
 import InventoryContainer from './_components/inventory-container';
+import { Suspense } from 'react';
+import Loading from './loading';
 
 interface paramsProps {
   searchParams: Record<string, string | string[] | undefined>;
@@ -18,13 +20,14 @@ export default async function InventoryPage({ searchParams }: paramsProps) {
     limit: pageLimit,
     page: page
   });
-  const total = data.total;
 
   return (
-    <InventoryContainer
-      data={data.products}
-      total={total}
-      searchParams={searchParams}
-    />
+    <Suspense fallback={<Loading />}>
+      <InventoryContainer
+        data={data.products}
+        total={data.total}
+        searchParams={searchParams}
+      />
+    </Suspense>
   );
 }
