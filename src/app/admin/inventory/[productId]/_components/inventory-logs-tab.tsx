@@ -13,7 +13,9 @@ export default async function InventoryLogsTab({
   const page = Number(searchParams.page) || 1;
   const limit = Number(searchParams.limit) || 5;
   const stockHistory = await api.inventory.getInventoryLogs({
-    productId
+    productId: productId,
+    page: page,
+    limit: limit
   });
   if (!stockHistory) return null;
   return (
