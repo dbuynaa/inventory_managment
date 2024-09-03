@@ -1,10 +1,13 @@
 import { Modal } from '@/components/ui/modal';
 import { ProductForm } from './product-form';
+import { type Product } from '@prisma/client';
 
 export default function ProductCreateModal({
   isOpen,
+  product,
   onClose
 }: {
+  product: Product | null;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -16,7 +19,7 @@ export default function ProductCreateModal({
       onClose={onClose}
       className="md:max-w-3xl"
     >
-      <ProductForm onComplete={onClose} initialData={null} />
+      <ProductForm onComplete={onClose} initialData={product} />
     </Modal>
   );
 }

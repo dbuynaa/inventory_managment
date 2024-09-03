@@ -5,7 +5,7 @@ import {
   protectedProcedure,
   publicProcedure
 } from '@/server/api/trpc';
-import { adjustmentCreateInput, productCreateInput } from '../types';
+import { productCreateInput } from '../types';
 import { TRPCError } from '@trpc/server';
 import { generateSKU } from '@/lib/utils';
 
@@ -96,46 +96,6 @@ export const productRouter = createTRPCRouter({
           message: 'Product not found'
         });
       }
-      return product;
-    }),
-
-  productAdjustment: protectedProcedure
-    .input(adjustmentCreateInput)
-    .mutation(async ({ ctx, input }) => {
-      const check = await ctx.db.product.findUnique({
-        where: { id: input.productId }
-      });
-
-      if (!check)
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Product not found'
-        });
-
-      const product = await ctx.db.inventoryAdjustment.create({
-        data: {
-          reason: input.reason,
-          quantityAdjusted: input.quantityAdjusted,
-          adjustmentType: 'ADJUSTED',
-          product: { connect: { id: input.productId } },
-          adjustedBy: { connect: { id: ctx.session.user.id } }
-        }
-      });
-      await ctx.db.product.update({
-        where: { id: input.productId },
-        data: {
-          quantityOnStock: { increment: input.quantityAdjusted }
-        }
-      });
-
-      await ctx.db.inventoryLog.create({
-        data: {
-          product: { connect: { id: input.productId } },
-          quantityChange: input.quantityAdjusted,
-          changeType: 'ADJUSTED'
-        }
-      });
-
       return product;
     })
 });

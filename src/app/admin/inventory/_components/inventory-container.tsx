@@ -84,6 +84,7 @@ export default function InventoryContainer({
           {createProductModal && (
             <ProductCreateModal
               isOpen={createProductModal}
+              product={null}
               onClose={() => setCreateProductModal(false)}
             />
           )}

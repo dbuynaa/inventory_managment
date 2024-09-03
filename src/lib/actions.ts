@@ -131,7 +131,7 @@ export async function adjustmentCreateAction(
   data: z.infer<typeof adjustmentCreateInput>
 ) {
   try {
-    await api.product.productAdjustment(data);
+    await api.inventory.productAdjustment(data);
     revalidatePath('/supplier');
     return {
       message: `Adjustemnt created successfully.`,
