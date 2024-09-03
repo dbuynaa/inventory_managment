@@ -47,8 +47,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const metadata = {
   title: 'Order Page',
-  description:   'An orders dashboard with a sidebar navigation. The sidebar has icon navigation. The content area has a breadcrumb and search in the header. The main area has a list of recent orders with a filter and export button. The main area also has a detailed view of a single order with order details, shipping information, billing information, customer information, and payment information.';
-
+  description:
+    'An orders dashboard with a sidebar navigation. The sidebar has icon navigation.'
 };
 
 export default function OrderPage() {
