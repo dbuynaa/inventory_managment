@@ -3,6 +3,8 @@ import {
   ArrowDown,
   ArrowRight,
   ArrowUp,
+  BarChart2,
+  ChartNoAxesCombined,
   Check,
   Command,
   Eye,
@@ -59,7 +61,9 @@ export const Icons = {
   moon: Moon,
   laptop: Laptop,
   order: ShoppingCart,
+  sales: ChartNoAxesCombined,
   send: Send,
+  logs: BarChart2,
   search: Search,
   google: ({ ...props }: LucideProps) => (
     <svg

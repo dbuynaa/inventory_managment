@@ -21,6 +21,7 @@ import { adjustmentCreateAction } from '@/lib/actions';
 import { adjustmentCreateInput } from '@/server/api/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Product } from '@prisma/client';
+import { DialogTrigger } from '@radix-ui/react-dialog';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { type z } from 'zod';
@@ -29,13 +30,12 @@ type AdjustmentFormData = z.infer<typeof adjustmentCreateInput>;
 
 export default function InventoryAdjustForm({
   product,
-  open,
-  onOpenChange
+  children
 }: {
   product: Product;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  children: React.ReactNode;
 }) {
+  const [open, onOpenChange] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
   const form = useForm<AdjustmentFormData>({
@@ -68,6 +68,7 @@ export default function InventoryAdjustForm({
   }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Adjust Inventory for {product.name}</DialogTitle>

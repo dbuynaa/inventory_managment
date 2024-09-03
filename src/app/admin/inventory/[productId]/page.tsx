@@ -1,4 +1,4 @@
-import type { Metadata, ResolvingMetadata } from 'next';
+import type { Metadata } from 'next';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { api } from '@/trpc/server';
 import InventoryDetailsPage from './_components/productDetails';
@@ -8,8 +8,8 @@ type Props = {
   searchParams: Record<string, string | string[] | undefined>;
 };
 export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
+  { params }: Props
+  // parent: ResolvingMetadata
 ): Promise<Metadata> {
   // read route params
   const id = params.productId;
@@ -34,7 +34,7 @@ export default async function InventoryPage({ params, searchParams }: Props) {
 
   return (
     <ScrollArea className="h-full">
-      <InventoryDetailsPage product={product} />
+      <InventoryDetailsPage searchParams={searchParams} product={product} />
     </ScrollArea>
   );
 }

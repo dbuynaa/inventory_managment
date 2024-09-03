@@ -6,7 +6,6 @@ import { columns } from './columts';
 import { DataTable } from '@/components/form/data-table';
 import InventoryHeader from './inventory-header';
 import { type Product } from '@prisma/client';
-import InventoryAdjustForm from './inventory-adjust-form';
 import { useState } from 'react';
 import ProductCreateModal from './product-create-modal';
 import { AlertModal } from '@/components/modal/alert-modal';
@@ -26,16 +25,10 @@ export default function InventoryContainer({
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 5;
   const [open, setOpen] = useState(false);
-  const [openAdjustModal, setOpenAdjustModal] = useState(false);
   const [createProductModal, setCreateProductModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [deleteProductId, setDeleteProductId] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleEditClick = ({ product }: { product: Product }) => {
-    setSelectedProduct(product);
-    setOpenAdjustModal(true);
-  };
   const handleDeleteClick = ({ id }: { id: string }) => {
     setDeleteProductId(id);
     setOpen(true);
@@ -75,7 +68,7 @@ export default function InventoryContainer({
           <Separator />
 
           <DataTable
-            columns={columns(handleEditClick, handleDeleteClick)}
+            columns={columns(handleDeleteClick)}
             data={data ?? []}
             page={page}
             limit={pageLimit}
@@ -88,13 +81,13 @@ export default function InventoryContainer({
               onClose={() => setCreateProductModal(false)}
             />
           )}
-          {selectedProduct && (
+          {/* {selectedProduct && (
             <InventoryAdjustForm
               product={selectedProduct}
               open={openAdjustModal}
               onOpenChange={setOpenAdjustModal}
             />
-          )}
+          )} */}
         </div>
       </PageContainer>
     </div>

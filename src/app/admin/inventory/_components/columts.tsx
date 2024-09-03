@@ -1,22 +1,21 @@
 'use client';
 
 import { Icons } from '@/components/icons';
-import { AlertModal } from '@/components/modal/alert-modal';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { type Product } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
+import InventoryAdjustForm from './inventory-adjust-form';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-type ProductShape = Pick<
-  Product,
-  'id' | 'name' | 'price' | 'costPrice' | 'quantityOnStock' | 'createdAt'
->;
+// type ProductShape = Pick<
+//   Product,
+//   'id' | 'name' | 'price' | 'costPrice' | 'quantityOnStock' | 'createdAt'
+// >;
 
 export const columns = (
-  handleEditClick: ({ product }: { product: Product }) => void,
   handleDeleteClick: ({ id }: { id: string }) => void
 ): ColumnDef<Product>[] => [
   {
@@ -56,17 +55,13 @@ export const columns = (
           >
             <Icons.details className="h-5 w-5" />
           </Link>
-          <Button
-            onClick={() => handleEditClick({ product: row.original })}
-            variant="ghost"
-            size={'sm'}
-          >
-            <Icons.adjust className="h-5 w-5" />
+          <Button variant="ghost" size={'sm'}>
+            <InventoryAdjustForm product={row.original}>
+              <Icons.adjust className="h-5 w-5" />
+            </InventoryAdjustForm>
+            {/* <Icons.adjust className="h-5 w-5" /> */}
           </Button>
           <Button
-            // formAction={async () => {
-            //   deleteProduct
-            // }}
             onClick={() => handleDeleteClick({ id: row.original.id })}
             variant="ghost"
             size={'sm'}

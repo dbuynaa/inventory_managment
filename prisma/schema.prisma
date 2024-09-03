@@ -124,6 +124,13 @@ model SalesDetail {
     productId      String
 }
 
+enum AdjustmentType {
+    INCREASE
+    DECREASE
+    CORRECTION
+    WRITTEN_OFF
+}
+
 model InventoryAdjustment {
     id               String         @id @default(uuid())
     adjustmentType   AdjustmentType
@@ -134,13 +141,14 @@ model InventoryAdjustment {
     product          Product        @relation(fields: [productId], references: [id])
     productId        String
     createdAt        DateTime?      @default(now())
+    inventoryLog     InventoryLog   @relation(fields: [inventoryLogId], references: [id])
+    inventoryLogId   String         @unique
 }
 
-enum AdjustmentType {
-    INCREASE
-    DECREASE
-    ADJUSTED
-    WRITTEN_OFF
+enum ChangeType {
+    SALE
+    PURCHASE
+    ADJUSTMENT
 }
 
 model Address {
@@ -158,14 +166,17 @@ model Address {
 }
 
 model InventoryLog {
-    id             String         @id @default(cuid())
-    changeType     AdjustmentType
+    id             String     @id @default(cuid())
+    changeType     ChangeType
     quantityChange Int
-    changedAt      DateTime       @default(now())
-    reference_id   Int?
-    product        Product        @relation(fields: [productId], references: [id])
+    changedAt      DateTime   @default(now())
+    referenceId    String?
+    product        Product    @relation(fields: [productId], references: [id])
     productId      String
-    createdAt      DateTime       @default(now())
+
+    adjustment InventoryAdjustment?
+
+    createdAt DateTime @default(now())
 }
 
 model Customer {

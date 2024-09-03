@@ -1,24 +1,11 @@
-// 'use client';
-
 import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Package,
   DollarSign,
   Truck,
-  TrendingUp,
-  TrendingDown,
   BarChart2,
   ArrowUpDown
 } from 'lucide-react';
@@ -28,9 +15,11 @@ import ProductInfoTab from './product-info-tab';
 import InventoryAdjustForm from '../../_components/inventory-adjust-form';
 
 export default function InventoryDetailsPage({
-  product: productDetails
+  product: productDetails,
+  searchParams: { page, limit }
 }: {
   product: Product;
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   return (
     <>
@@ -108,41 +97,21 @@ export default function InventoryDetailsPage({
           </TabsContent>
           <TabsContent value="history">
             <Suspense fallback={<div>Loading...</div>}>
-              <InventoryLogsTab productId={productDetails.id} />
+              <InventoryLogsTab
+                searchParams={{ page: String(page), limit: String(limit) }}
+                productId={productDetails.id}
+              />
             </Suspense>
           </TabsContent>
         </Tabs>
 
         <div className="mt-6 flex flex-col sm:flex-row gap-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                <ArrowUpDown className="mr-2 h-4 w-4" />
-                Increase Stock
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Increase Stock</DialogTitle>
-              </DialogHeader>
-
-              {/* <InventoryAdjustForm product={productDetails} open /> */}
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="stock-increase" className="text-right">
-                    Quantity
-                  </Label>
-                  <Input
-                    id="stock-increase"
-                    type="number"
-                    className="col-span-3"
-                    placeholder="Enter quantity to add"
-                  />
-                </div>
-              </div>
-              <Button>Confirm Increase</Button>
-            </DialogContent>
-          </Dialog>
+          <InventoryAdjustForm product={productDetails}>
+            <Button>
+              <ArrowUpDown className="mr-2 h-4 w-4" />
+              Adjustment
+            </Button>
+          </InventoryAdjustForm>
           <Button variant="secondary">
             <BarChart2 className="mr-2 h-4 w-4" />
             Generate Report

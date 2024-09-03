@@ -13,3 +13,12 @@ export function generateSKU(category: string, supplierName: string) {
     .padStart(3, '0');
   return `${categoryInitials}-${supplierInitials}-${randomString}`;
 }
+
+export function generateReferenceId(
+  quantityChange: number,
+  changeType: string
+): string {
+  const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, '');
+  const uniqueSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `${changeType.slice(0, 3).toUpperCase()}${Math.abs(quantityChange)}-${timestamp.slice(0, 8)}-${uniqueSuffix}`;
+}

@@ -2,7 +2,7 @@
 
 import { signIn } from '@/auth';
 import {
-  productCreateInput,
+  type productCreateInput,
   type adjustmentCreateInput,
   type supplierCreateInput
 } from '@/server/api/types';
