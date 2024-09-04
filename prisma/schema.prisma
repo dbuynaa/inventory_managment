@@ -16,13 +16,16 @@ datasource db {
 }
 
 model PurchaseOrder {
-    id                   String                @id @default(uuid())
-    orderDate            DateTime              @default(now())
+    id                   String      @id @default(uuid())
+    orderDate            DateTime    @default(now())
     expectedDeliveryDate DateTime
-    status               OrderStatus           @default(PENDING)
+    status               OrderStatus @default(PENDING)
     totalAmount          Float
     supplierId           String
-    supplier             Supplier              @relation(fields: [supplierId], references: [id])
+    supplier             Supplier    @relation(fields: [supplierId], references: [id])
+    orderedBy            User        @relation(fields: [userId], references: [id])
+    userId               String
+
     createdAt            DateTime              @default(now())
     updatedAt            DateTime              @updatedAt
     purchaseOrderDetails PurchaseOrderDetail[]
@@ -200,6 +203,7 @@ model User {
     role                UserRole              @default(ADMIN)
     product             Product[]
     inventoryAdjustment InventoryAdjustment[]
+    PurchaseOrder       PurchaseOrder[]
 }
 
 enum UserRole {

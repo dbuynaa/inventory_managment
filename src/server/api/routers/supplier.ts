@@ -72,7 +72,7 @@ export const supplierRouter = createTRPCRouter({
       return { data, total };
     }),
 
-  getById: publicProcedure
+  getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const supplier = await ctx.db.supplier.findUnique({

@@ -35,3 +35,22 @@ export const adjustmentCreateInput = z.object({
   reason: z.string()
   // adjustmentType: z.enum(AdjustmentType.ADJUSTED, )
 });
+
+export const orderCreateInput = z.object({
+  expectedDeliveryDate: z.date({
+    required_error: 'Expected delivery date is required'
+  }),
+  totalAmount: z.coerce.number({
+    required_error: 'Total amount is required'
+  }),
+  supplierId: z.string().min(1, 'Supplier is required'),
+
+  orderDetails: z.array(
+    z.object({
+      totalPrice: z.coerce.number(),
+      pricePerUnit: z.coerce.number(),
+      quantityOrdered: z.coerce.number(),
+      productId: z.string()
+    })
+  )
+});

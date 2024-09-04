@@ -1,46 +1,25 @@
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-import { productCreateInput } from '../types';
+import { orderCreateInput, productCreateInput } from '../types';
 import { TRPCError } from '@trpc/server';
-import { generateSKU } from '@/lib/utils';
 
-export const productRouter = createTRPCRouter({
+export const orderRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(productCreateInput)
+    .input(orderCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { categoryId, supplierId, ..._input } = input;
-
-      const checkCategory = await ctx.db.category.findUnique({
-        where: { id: categoryId }
-      });
-
-      if (!checkCategory) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Category not found'
-        });
-      }
-
-      const checkSupplier = await ctx.db.supplier.findUnique({
-        where: { id: supplierId }
-      });
-
-      if (!checkSupplier) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Supplier not found'
-        });
-      }
-
-      const sku = generateSKU(checkCategory.name, checkSupplier.name);
-      return await ctx.db.product.create({
+      return await ctx.db.purchaseOrder.create({
         data: {
-          ..._input,
-          sku: sku,
-          supplier: { connect: { id: checkSupplier.id } },
-          category: { connect: { id: checkCategory.id } },
-          createdBy: { connect: { id: ctx.session.user.id } }
+          expectedDeliveryDate: input.expectedDeliveryDate,
+          totalAmount: input.totalAmount,
+          status: 'PENDING',
+          supplier: { connect: { id: input.supplierId } },
+          orderedBy: { connect: { id: ctx.session.user.id } },
+          purchaseOrderDetails: {
+            createMany: {
+              data: input.orderDetails
+            }
+          }
         }
       });
     }),
