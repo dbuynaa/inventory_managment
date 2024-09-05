@@ -1,15 +1,13 @@
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-import { orderCreateInput, productCreateInput } from '../types';
+import { salesCreateInput } from '../types';
 import { TRPCError } from '@trpc/server';
 
-export const orderRouter = createTRPCRouter({
+export const salesRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(orderCreateInput)
+    .input(salesCreateInput)
     .mutation(async ({ ctx, input }) => {
-      // const totalPrice = input.products.map((product) => product.pricePerUnit * product.quantity).reduce((a, b) => a + b, 0);
-
       const products = await ctx.db.product.findMany({
         where: {
           id: {
@@ -24,38 +22,25 @@ export const orderRouter = createTRPCRouter({
           message: 'Product not found'
         });
       }
-      const checkSupplier = await ctx.db.supplier.findUnique({
-        where: { id: input.supplierId }
-      });
-
-      if (!checkSupplier) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Supplier not found'
-        });
-      }
-
       const calculateTotal = () => {
         return input.products
-          .map((product) => product.pricePerUnit * product.quantity)
+          .map((product) => product.pricePerUnit * product.quantitySold)
           .reduce((a, b) => a + b, 0);
       };
-
-      const order = await ctx.db.purchaseOrder.create({
+      const data = await ctx.db.sale.create({
         data: {
-          expectedDeliveryDate: input.expectedDeliveryDate,
+          paymentMethod: input.paymentMethod,
+          status: input.status,
           totalAmount: calculateTotal(),
-          status: 'PENDING',
-          supplier: { connect: { id: checkSupplier.id } },
-          orderedBy: { connect: { id: ctx.session.user.id } },
-          purchaseOrderDetails: {
+          createdBy: ctx.session.user.id,
+          customer: {
+            connect: { id: input.customerId }
+          },
+          salesDetails: {
             createMany: {
               data: input.products
             }
           }
-        },
-        include: {
-          purchaseOrderDetails: true
         }
       });
 
@@ -67,8 +52,8 @@ export const orderRouter = createTRPCRouter({
         },
         data: {
           quantityOnStock: {
-            increment: input.products
-              .map((product) => product.quantity)
+            decrement: input.products
+              .map((product) => product.quantitySold)
               .reduce((a, b) => a + b, 0)
           }
         }
@@ -76,25 +61,32 @@ export const orderRouter = createTRPCRouter({
 
       await ctx.db.inventoryLog.createMany({
         data: input.products.map((product) => ({
-          changeType: 'PURCHASE',
-          quantityChange: product.quantity,
+          changeType: 'SALE',
+          quantityChange: product.quantitySold,
           productId: product.productId
         }))
       });
 
-      return order;
+      return data;
     }),
 
   update: protectedProcedure
-    .input(productCreateInput)
+    .input(salesCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { categoryId, supplierId, id, ..._input } = input;
-      return await ctx.db.product.update({
-        where: { id: id },
+      const calculateTotal = () => {
+        return input.products
+          .map((product) => product.pricePerUnit * product.quantitySold)
+          .reduce((a, b) => a + b, 0);
+      };
+      return await ctx.db.sale.update({
+        where: { id: input.id },
         data: {
-          ..._input,
-          supplier: supplierId ? { connect: { id: supplierId } } : undefined,
-          category: { connect: { id: categoryId } }
+          paymentMethod: input.paymentMethod,
+          status: input.status,
+          customer: {
+            connect: { id: input.customerId }
+          },
+          totalAmount: calculateTotal()
         }
       });
     }),
@@ -102,15 +94,20 @@ export const orderRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.product.delete({ where: { id: input.id } });
+      return await ctx.db.sale.delete({ where: { id: input.id } });
     }),
 
   getMany: protectedProcedure
     .input(z.object({ limit: z.number(), page: z.number() }))
     .query(async ({ ctx, input }) => {
-      const data = await ctx.db.purchaseOrder.findMany({
+      const data = await ctx.db.sale.findMany({
         orderBy: { createdAt: 'desc' },
-        include: { supplier: true },
+        include: {
+          salesDetails: {
+            include: { product: true }
+          },
+          customer: true
+        },
         take: input.limit,
         skip: input.limit * (input.page - 1)
       });
@@ -123,12 +120,10 @@ export const orderRouter = createTRPCRouter({
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const product = await ctx.db.purchaseOrder.findUnique({
+      const product = await ctx.db.sale.findUnique({
         where: { id: input.id },
         include: {
-          supplier: true,
-          purchaseOrderDetails: { include: { product: true } },
-          orderedBy: true
+          customer: true
         }
       });
 

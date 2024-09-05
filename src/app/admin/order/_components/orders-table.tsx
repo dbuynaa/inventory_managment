@@ -70,7 +70,7 @@ export async function OrderDataTable() {
               data={data.data}
               limit={10}
               page={1}
-              totalProducts={data.total}
+              total={data.total}
             />
           </CardContent>
         </Card>

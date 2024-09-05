@@ -90,7 +90,7 @@ export default function SupplierContainer({
             // isLoading={}
             page={page}
             limit={pageLimit}
-            totalProducts={total}
+            total={total}
           />
         )}
       </div>

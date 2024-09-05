@@ -69,7 +69,7 @@ export function InventoryLogsContainer({
         <CardContent>
           <DataTable
             data={inventoryLogs}
-            totalProducts={total}
+            total={total}
             columns={columns}
             page={page}
             limit={pageLimit}

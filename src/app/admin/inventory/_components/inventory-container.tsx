@@ -72,7 +72,7 @@ export default function InventoryContainer({
             data={data ?? []}
             page={page}
             limit={pageLimit}
-            totalProducts={total}
+            total={total}
           />
           {createProductModal && (
             <ProductCreateModal

@@ -1,3 +1,4 @@
+import { SalesStatus } from '@prisma/client';
 import { z } from 'zod';
 export const loginSchema = z.object({
   phoneNumber: z.string().min(1, { message: 'Phone number is required' }),
@@ -58,11 +59,34 @@ export const orderCreateInput = z.object({
     })
   )
 });
-// const formSchema = z.object({
-//   supplierId: z.string().nonempty("Supplier is required"),
-//   expectedDeliveryDate: z.string().nonempty("Expected delivery date is required"),
-//   products: z.array(z.object({
-//     productId: z.string().nonempty("Product is required"),
-//     quantity: z.number().min(1, "Quantity must be at least 1")
-//   })).min(1, "At least one product is required")
-// })
+
+export const salesCreateInput = z.object({
+  id: z.string().optional(),
+  paymentMethod: z.string().min(1, 'Payment method is required'),
+  status: z.nativeEnum(SalesStatus),
+  customerId: z.string().min(1, 'Customer is required'),
+  products: z.array(
+    z.object({
+      productId: z.string().min(1, 'Product is required'),
+      pricePerUnit: z.coerce.number({
+        message: 'Price per unit is required'
+      }),
+      quantitySold: z.coerce.number().min(1, 'Quantity must be at least 1'),
+      totalPrice: z.coerce
+        .number()
+        .positive({ message: 'Total must be a positive number.' })
+    })
+  )
+});
+
+export const customerCreateInput = z.object({
+  id: z.string().optional(),
+  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
+  email: z.string().email({ message: 'Invalid email address.' }),
+  phone: z
+    .string()
+    .regex(/^\+?[1-9]\d{1,14}$/, { message: 'Invalid phone number.' }),
+  address: z
+    .string()
+    .min(5, { message: 'Address must be at least 5 characters.' })
+});

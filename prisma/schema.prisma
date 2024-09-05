@@ -108,24 +108,36 @@ model Supplier {
 }
 
 model Sale {
-    id             String        @id @default(uuid())
-    saleDate       DateTime      @default(now())
-    total_amount   Float
-    payment_method String
-    status         String
-    created_at     DateTime      @default(now())
-    salesDetails   SalesDetail[]
+    id            String      @id @default(uuid())
+    saleDate      DateTime    @default(now())
+    totalAmount   Float
+    paymentMethod String
+    status        SalesStatus
+
+    // Relations
+    customerId   String
+    customer     Customer      @relation(fields: [customerId], references: [id])
+    createdBy    String?
+    createdAt    DateTime?     @default(now())
+    salesDetails SalesDetail[]
+}
+
+enum SalesStatus {
+    PENDING
+    PROCESSING
+    SHIPPED
+    DELIVERED
 }
 
 model SalesDetail {
-    id             String  @id @default(uuid())
-    quantity_sold  Int
-    price_per_unit Float
-    total_price    Float
-    sale           Sale    @relation(fields: [saleId], references: [id])
-    saleId         String
-    product        Product @relation(fields: [productId], references: [id])
-    productId      String
+    id           String  @id @default(uuid())
+    quantitySold Int
+    pricePerUnit Float
+    totalPrice   Float
+    sale         Sale    @relation(fields: [saleId], references: [id])
+    saleId       String
+    product      Product @relation(fields: [productId], references: [id])
+    productId    String
 }
 
 enum AdjustmentType {
@@ -184,12 +196,13 @@ model InventoryLog {
 }
 
 model Customer {
-    id         String   @id @default(cuid())
-    name       String
-    email      String?
-    phone      String   @unique
-    address    String
-    created_at DateTime @default(now())
+    id        String   @id @default(cuid())
+    name      String
+    email     String?
+    phone     String   @unique
+    address   String
+    createdAt DateTime @default(now())
+    sales     Sale[]
 }
 
 model User {

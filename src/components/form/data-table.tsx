@@ -36,7 +36,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   page: number;
   limit: number;
-  totalProducts: number;
+  total: number;
 }
 
 export function DataTable<TData, TValue>({
@@ -44,7 +44,7 @@ export function DataTable<TData, TValue>({
   data,
   page = 1,
   limit = 5,
-  totalProducts
+  total
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const table = useReactTable({
@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
     }
   }
   function nextPage() {
-    const maxPage = Math.ceil(totalProducts / limit);
+    const maxPage = Math.ceil(total / limit);
     if (page < maxPage) {
       setParam('page', `${page + 1}`);
     }
@@ -134,7 +134,7 @@ export function DataTable<TData, TValue>({
           Previous
         </Button>
         <span>
-          Page {page} of {Math.ceil(totalProducts / limit)}
+          Page {page} of {Math.ceil(total / limit)}
         </span>
         <div className="flex items-center gap-2">
           <Select
@@ -155,7 +155,7 @@ export function DataTable<TData, TValue>({
           <Button
             variant="outline"
             onClick={nextPage}
-            disabled={page >= Math.ceil(totalProducts / limit)}
+            disabled={page >= Math.ceil(total / limit)}
           >
             Next
             <ChevronRight className="ml-2 h-4 w-4" />

@@ -29,7 +29,7 @@ export default async function InventoryLogsTab({
           data={stockHistory.data}
           page={page}
           limit={limit}
-          totalProducts={stockHistory.total}
+          total={stockHistory.total}
         />
       </CardContent>
     </Card>
