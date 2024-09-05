@@ -66,9 +66,16 @@ export const productRouter = createTRPCRouter({
     }),
 
   getMany: protectedProcedure
-    .input(z.object({ limit: z.number(), page: z.number() }))
+    .input(
+      z.object({
+        limit: z.number(),
+        page: z.number(),
+        supplierId: z.string().optional()
+      })
+    )
     .query(async ({ ctx, input }) => {
       const products = await ctx.db.product.findMany({
+        where: { supplierId: input.supplierId },
         orderBy: { createdAt: 'desc' },
         take: input.limit,
         skip: input.limit * (input.page - 1)

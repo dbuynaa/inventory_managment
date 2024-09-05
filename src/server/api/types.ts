@@ -37,20 +37,32 @@ export const adjustmentCreateInput = z.object({
 });
 
 export const orderCreateInput = z.object({
-  expectedDeliveryDate: z.date({
-    required_error: 'Expected delivery date is required'
-  }),
-  totalAmount: z.coerce.number({
-    required_error: 'Total amount is required'
-  }),
+  expectedDeliveryDate: z
+    .date()
+    .min(new Date(), 'Expected delivery date is required'),
+  // totalAmount: z.coerce.number({
+  //   required_error: 'Total amount is required'
+  // }),
   supplierId: z.string().min(1, 'Supplier is required'),
 
-  orderDetails: z.array(
+  products: z.array(
     z.object({
       totalPrice: z.coerce.number(),
-      pricePerUnit: z.coerce.number(),
-      quantityOrdered: z.coerce.number(),
-      productId: z.string()
+      pricePerUnit: z.coerce.number({
+        message: 'Price per unit is required',
+        invalid_type_error: 'Price per unit is required',
+        required_error: 'Price per unit is required'
+      }),
+      quantity: z.coerce.number().min(1, 'Quantity must be at least 1'),
+      productId: z.string().min(1, 'Product is required')
     })
   )
 });
+// const formSchema = z.object({
+//   supplierId: z.string().nonempty("Supplier is required"),
+//   expectedDeliveryDate: z.string().nonempty("Expected delivery date is required"),
+//   products: z.array(z.object({
+//     productId: z.string().nonempty("Product is required"),
+//     quantity: z.number().min(1, "Quantity must be at least 1")
+//   })).min(1, "At least one product is required")
+// })

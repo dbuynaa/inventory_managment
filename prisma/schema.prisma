@@ -33,7 +33,7 @@ model PurchaseOrder {
 
 model PurchaseOrderDetail {
     id              String        @id @default(uuid())
-    quantityOrdered Int
+    quantity        Int
     pricePerUnit    Float
     totalPrice      Float
     purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])

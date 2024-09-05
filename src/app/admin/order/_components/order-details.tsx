@@ -9,10 +9,8 @@ import {
 } from '@/components/ui/card';
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
@@ -21,8 +19,10 @@ import {
   PaginationContent,
   PaginationItem
 } from '@/components/ui/pagination';
+import { api } from '@/trpc/server';
 
 import { Separator } from '@radix-ui/react-select';
+import { format } from 'date-fns';
 import {
   ChevronLeft,
   ChevronRight,
@@ -32,13 +32,14 @@ import {
   Truck
 } from 'lucide-react';
 
-export function OrderDetails() {
+export async function OrderDetails({ orderId }: { orderId: string }) {
+  const data = await api.order.getById({ id: orderId });
   return (
     <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
       <CardHeader className="flex flex-row items-start bg-muted/50">
         <div className="grid gap-0.5">
           <CardTitle className="group flex items-center gap-2 text-lg">
-            Order Oe31b70H
+            {data.id.substring(0, 6)}
             <Button
               size="icon"
               variant="outline"
@@ -48,7 +49,9 @@ export function OrderDetails() {
               <span className="sr-only">Copy Order ID</span>
             </Button>
           </CardTitle>
-          <CardDescription>Date: November 23, 2023</CardDescription>
+          <CardDescription>
+            Date: {format(data.createdAt, 'dd MMM yyyy')}
+          </CardDescription>
         </div>
         <div className="ml-auto flex items-center gap-1">
           <Button size="sm" variant="outline" className="h-8 gap-1">
@@ -75,76 +78,59 @@ export function OrderDetails() {
       </CardHeader>
       <CardContent className="p-6 text-sm">
         <div className="grid gap-3">
-          <div className="font-semibold">Order Details</div>
-          <ul className="grid gap-3">
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">
-                Glimmer Lamps x <span>2</span>
-              </span>
-              <span>$250.00</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">
-                Aqua Filters x <span>1</span>
-              </span>
-              <span>$49.00</span>
-            </li>
-          </ul>
-          <Separator className="my-2" />
-          <ul className="grid gap-3">
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span>$299.00</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Shipping</span>
-              <span>$5.00</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Tax</span>
-              <span>$25.00</span>
-            </li>
-            <li className="flex items-center justify-between font-semibold">
-              <span className="text-muted-foreground">Total</span>
-              <span>$329.00</span>
-            </li>
-          </ul>
-        </div>
-        <Separator className="my-4" />
-        <div className="grid grid-cols-2 gap-4">
-          <div className="grid gap-3">
-            <div className="font-semibold">Shipping Information</div>
-            <address className="grid gap-0.5 not-italic text-muted-foreground">
-              <span>Liam Johnson</span>
-              <span>1234 Main St.</span>
-              <span>Anytown, CA 12345</span>
-            </address>
-          </div>
-          <div className="grid auto-rows-max gap-3">
-            <div className="font-semibold">Billing Information</div>
-            <div className="text-muted-foreground">
-              Same as shipping address
-            </div>
-          </div>
-        </div>
-        <Separator className="my-4" />
-        <div className="grid gap-3">
-          <div className="font-semibold">Customer Information</div>
+          <div className="font-semibold">Purchase Information</div>
           <dl className="grid gap-3">
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Customer</dt>
-              <dd>Liam Johnson</dd>
+              <dt className="text-muted-foreground">Status</dt>
+              <dd>{data.status}</dd>
+            </div>
+            <div className="flex items-center justify-between">
+              <dt className="text-muted-foreground"> Expected Delivery</dt>
+              <dd>{format(data.expectedDeliveryDate, 'dd MMM yyyy')}</dd>
+            </div>
+            <div className="flex items-center justify-between">
+              <dt className="text-muted-foreground">Total Price</dt>
+              <dd>
+                <a href="mailto:">${data.totalAmount}</a>
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <Separator className="my-4" />
+
+        <div className="grid gap-3">
+          <div className="font-semibold">Order Details</div>
+          <ul className="grid gap-3">
+            {data.purchaseOrderDetails.map((item) => (
+              <li key={item.id} className="flex items-center justify-between">
+                <span className="text-muted-foreground">
+                  {item.product?.name} x <span>{item.quantity}</span>
+                </span>
+                <span>${item.totalPrice}</span>
+              </li>
+            ))}
+          </ul>
+          {/* <Separator className="my-2" /> */}
+        </div>
+
+        <Separator className="my-4" />
+        <div className="grid gap-3">
+          <div className="font-semibold">Supplier Information</div>
+          <dl className="grid gap-3">
+            <div className="flex items-center justify-between">
+              <dt className="text-muted-foreground">Name</dt>
+              <dd>{data.supplier.name}</dd>
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-muted-foreground">Email</dt>
               <dd>
-                <a href="mailto:">liam@acme.com</a>
+                <a href="mailto:">{data.supplier.email}</a>
               </dd>
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-muted-foreground">Phone</dt>
               <dd>
-                <a href="tel:">+1 234 567 890</a>
+                <a href="tel:">{data.supplier.phoneNumber}</a>
               </dd>
             </div>
           </dl>
