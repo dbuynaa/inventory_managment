@@ -30,8 +30,8 @@ export default async function RootLayout({
             <NextTopLoader showSpinner={false} />
             <Toaster />
             {children}
-            <Analytics />
-            <SpeedInsights />
+            {/* <Analytics /> */}
+            {/* <SpeedInsights /> */}
           </Providers>
         </TRPCReactProvider>
       </body>
