@@ -21,10 +21,16 @@ import { api } from '@/trpc/server';
 import { DataTable } from '@/components/form/data-table';
 import { columns } from './column';
 
-export async function OrderDataTable() {
+export async function OrderDataTable({
+  limit,
+  page
+}: {
+  limit: number;
+  page: number;
+}) {
   const data = await api.order.getMany({
-    limit: 10,
-    page: 1
+    limit: limit,
+    page: page
   });
   return (
     <Tabs defaultValue="week">

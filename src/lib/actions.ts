@@ -5,8 +5,8 @@ import {
   type productCreateInput,
   type adjustmentCreateInput,
   type supplierCreateInput,
-  customerCreateInput,
-  salesCreateInput
+  type customerCreateInput,
+  type salesCreateInput
 } from '@/server/api/types';
 import { api } from '@/trpc/server';
 import { TRPCError } from '@trpc/server';
