@@ -135,7 +135,7 @@ export const orderRouter = createTRPCRouter({
       if (!product) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Product not found'
+          message: 'Order not found'
         });
       }
       return product;

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { OrderCards } from './_components/order-cards';
 import { OrderDetails } from './_components/order-details';
 import { OrderDataTable } from './_components/orders-table';
@@ -17,11 +18,19 @@ export default function OrderPage({ searchParams }: paramsProps) {
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 ">
       <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
-        <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
+        <div
+          className={`${orderId ? 'lg:col-span-2' : 'col-span-3'} grid auto-rows-max items-start gap-4 md:gap-8 `}
+        >
           <OrderCards />
-          <OrderDataTable page={page} limit={pageLimit} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <OrderDataTable page={page} limit={pageLimit} />
+          </Suspense>
         </div>
-        <div>{orderId && <OrderDetails orderId={orderId as string} />}</div>
+        {orderId && (
+          <Suspense fallback={<div>Loading...</div>}>
+            <OrderDetails orderId={String(orderId)} />
+          </Suspense>
+        )}
       </main>
     </div>
   );
