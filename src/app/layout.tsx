@@ -4,6 +4,8 @@ import { GeistSans } from 'geist/font/sans';
 import { type Metadata } from 'next';
 import { Toaster } from '@/components/ui/toaster';
 import NextTopLoader from 'nextjs-toploader';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { Providers } from '@/components/layout';
 import { TRPCReactProvider } from '@/trpc/react';
@@ -28,6 +30,8 @@ export default async function RootLayout({
             <NextTopLoader showSpinner={false} />
             <Toaster />
             {children}
+            <Analytics />
+            <SpeedInsights />
           </Providers>
         </TRPCReactProvider>
       </body>
