@@ -1,10 +1,9 @@
-import NextAuth, { type DefaultSession } from 'next-auth';
+import NextAuth, { type DefaultSession, type NextAuthConfig } from 'next-auth';
 import type { DefaultJWT } from 'next-auth/jwt';
-import type { NextAuthConfig } from 'next-auth';
 
 import { db } from '@/server/db';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
+import { compare } from 'bcryptjs';
 import { type UserRole } from '@prisma/client';
 import { z } from 'zod';
 
@@ -71,7 +70,7 @@ export const authOptions = {
           });
           if (!user) return null;
 
-          const passwordsMatch = await bcrypt.compare(password, user.password);
+          const passwordsMatch = await compare(password, user.password);
 
           if (passwordsMatch)
             return {
@@ -101,7 +100,7 @@ export const authOptions = {
       }
       return true;
     },
-    async session({ session, token }) {
+    session({ session, token }) {
       // Add role to the session
       if (token.id) session.user.id = token.id;
       if (token.role) session.user.role = token.role;
@@ -110,7 +109,7 @@ export const authOptions = {
 
       return session;
     },
-    async jwt({ token, user }) {
+    jwt({ token, user }) {
       // Add role to the token
       if (user) token.role = user.role;
       if (user) token.phoneNumber = user.phoneNumber;

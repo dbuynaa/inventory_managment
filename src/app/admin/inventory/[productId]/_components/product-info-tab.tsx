@@ -33,7 +33,7 @@ export default function ProductInfoTab({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <dl className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <dt className="font-medium">SKU</dt>
               <dd>{productDetails.sku}</dd>

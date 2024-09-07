@@ -21,10 +21,10 @@ import { customerCreateInput } from '@/server/api/types';
 
 type Customer = z.infer<typeof customerCreateInput>;
 
-type CustomerFormProps = {
+interface CustomerFormProps {
   onSubmit: (customer: Customer) => void;
   initialData?: Customer;
-};
+}
 
 export default function CustomerForm({
   onSubmit,

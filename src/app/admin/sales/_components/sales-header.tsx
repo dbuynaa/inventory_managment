@@ -30,7 +30,7 @@ export const SalesHeader = () => {
   }>({ from: null, to: null });
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-6">
+    <div className="mb-6 flex flex-col gap-4 md:flex-row">
       <Input
         placeholder="Search by customer name..."
         value={searchTerm}

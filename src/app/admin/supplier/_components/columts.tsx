@@ -22,7 +22,7 @@ export const columns = (
     header: ({ column }) => {
       return (
         <div
-          className="cursor-pointer flex items-center"
+          className="flex cursor-pointer items-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Name
@@ -45,7 +45,7 @@ export const columns = (
     accessorKey: 'createdAt',
     header: ({ column }) => (
       <div
-        className="cursor-pointer flex items-center"
+        className="flex cursor-pointer items-center"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         Created At

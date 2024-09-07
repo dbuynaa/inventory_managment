@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Basic admin with Next.js and Shadcn'
 };
 
-export default async function AdminLayout({
+export default function AdminLayout({
   children
 }: {
   children: React.ReactNode;

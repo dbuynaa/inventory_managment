@@ -27,10 +27,10 @@ import { SalesStatus } from '@prisma/client';
 
 type Sale = z.infer<typeof salesCreateInput>;
 
-type SaleFormProps = {
+interface SaleFormProps {
   onSubmit: (customer: Sale) => void;
   initialData?: Sale;
-};
+}
 
 export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
   const form = useForm<Sale>({

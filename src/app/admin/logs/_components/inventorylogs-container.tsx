@@ -39,9 +39,9 @@ export function InventoryLogsContainer({
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Inventory Logs</h1>
+      <h1 className="mb-6 text-3xl font-bold">Inventory Logs</h1>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="mb-6 flex flex-col gap-4 md:flex-row">
         <Input
           placeholder="Search by product name..."
           value={searchTerm}

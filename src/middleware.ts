@@ -3,7 +3,7 @@ import { authOptions } from './auth';
 import NextAuth from 'next-auth';
 
 const { auth } = NextAuth(authOptions);
-export default auth(async function middleware(req) {
+export default auth(function middleware(req) {
   const { nextUrl } = req;
 
   const isAuthenticated = !!req.auth;

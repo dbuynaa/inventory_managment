@@ -18,11 +18,11 @@ import { useState } from 'react';
 import SupplierForm from './supplierForm';
 import { type Supplier } from '@prisma/client';
 
-type paramsProps = {
+interface paramsProps {
   searchParams: Record<string, string | string[] | undefined>;
   data: Supplier[];
   total: number;
-};
+}
 
 export default function SupplierContainer({
   searchParams,
@@ -45,7 +45,7 @@ export default function SupplierContainer({
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
-        <div className="flex justify-between items-center mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <Input
             type="search"
             placeholder="Search suppliers..."

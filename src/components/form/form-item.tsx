@@ -1,14 +1,14 @@
 import {
   type FieldPath,
   type FieldValues,
-  type UseFormReturn,
+  type UseFormReturn
 } from 'react-hook-form';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '../ui/form';
 import { Input, type InputProps } from '../ui/input';
 
@@ -22,7 +22,7 @@ export const FormInput = <T extends FieldValues>({
   form,
   label,
   name,
-  inputProps,
+  inputProps
 }: React.PropsWithChildren<FormItemProps<T>>) => {
   return (
     <FormField

@@ -3,10 +3,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { api } from '@/trpc/server';
 import InventoryDetailsPage from './_components/productDetails';
 
-type Props = {
+interface Props {
   params: { productId: string };
   searchParams: Record<string, string | string[] | undefined>;
-};
+}
 export async function generateMetadata(
   { params }: Props
   // parent: ResolvingMetadata

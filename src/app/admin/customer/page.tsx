@@ -17,7 +17,7 @@ export default async function CustomerPage({ searchParams }: paramsProps) {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Customer Management</h1>
+      <h1 className="mb-4 text-2xl font-bold">Customer Management</h1>
       <CustomerHeader />
 
       <DataTable

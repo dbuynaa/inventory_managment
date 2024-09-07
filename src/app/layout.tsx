@@ -1,6 +1,7 @@
 import '@/styles/globals.css';
 
-import { GeistSans } from 'geist/font/sans';
+// import { GeistSans } from 'geist/font/sans';
+import { Roboto } from 'next/font/google';
 import { type Metadata } from 'next';
 import { Toaster } from '@/components/ui/toaster';
 import NextTopLoader from 'nextjs-toploader';
@@ -17,13 +18,19 @@ export const metadata: Metadata = {
   icons: [{ rel: 'icon', url: '/favicon.ico' }]
 };
 
+const inter = Roboto({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['300', '400', '500', '700']
+});
+
 export default async function RootLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth();
 
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html lang="en" className={`${inter.variable}`}>
       <body>
         <TRPCReactProvider>
           <Providers session={session}>

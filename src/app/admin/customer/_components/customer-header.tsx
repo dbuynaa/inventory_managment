@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 export default function CustomerHeader() {
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className="mb-4 flex items-center justify-between">
       <Input
         type="text"
         placeholder="Search customers..."

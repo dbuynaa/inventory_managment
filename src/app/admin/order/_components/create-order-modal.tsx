@@ -75,7 +75,7 @@ export function CreateOrderModal() {
     page: 1
   });
 
-  const { mutate: createOrder } = api.order.create.useMutation({
+  const { mutate: createOrder, isPending } = api.order.create.useMutation({
     onSuccess: () => {
       toast({
         title: 'Order created successfully',
@@ -336,7 +336,9 @@ export function CreateOrderModal() {
               </Button>
             </div>
             <DialogFooter>
-              <Button type="submit">Create Order</Button>
+              <Button disabled={isPending} type="submit">
+                Create Order
+              </Button>
             </DialogFooter>
           </form>
         </Form>

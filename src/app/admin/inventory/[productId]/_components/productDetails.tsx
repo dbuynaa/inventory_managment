@@ -24,12 +24,12 @@ export default function InventoryDetailsPage({
   return (
     <>
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="mb-6 text-3xl font-bold">
           {productDetails.name} - Inventory Details
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="flex justify-center items-start md:items-center">
+        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="flex items-start justify-center md:items-center">
             {/* <Image
             src="https://via.placeholder.com/300"
             alt={productDetails.name}
@@ -105,7 +105,7 @@ export default function InventoryDetailsPage({
           </TabsContent>
         </Tabs>
 
-        <div className="mt-6 flex flex-col sm:flex-row gap-4">
+        <div className="mt-6 flex flex-col gap-4 sm:flex-row">
           <InventoryAdjustForm product={productDetails}>
             <Button>
               <ArrowUpDown className="mr-2 h-4 w-4" />

@@ -128,7 +128,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </CardContent>
-      <CardFooter className="flex justify-between items-center">
+      <CardFooter className="flex items-center justify-between">
         <Button variant="outline" onClick={prevPage} disabled={page <= 1}>
           <ChevronLeft className="mr-2 h-4 w-4" />
           Previous

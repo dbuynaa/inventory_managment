@@ -20,10 +20,10 @@ import { useState } from 'react';
 
 type SupplierFormData = z.infer<typeof supplierCreateInput>;
 
-type SupplierFormProps = {
+interface SupplierFormProps {
   initialData?: SupplierFormData;
   onSuccess?: () => void;
-};
+}
 
 export default function SupplierForm({
   initialData,
