@@ -7,7 +7,6 @@ import { DataTable } from '@/components/form/data-table';
 import InventoryHeader from './inventory-header';
 import { type Product } from '@prisma/client';
 import { useState } from 'react';
-import ProductCreateModal from './product-create-modal';
 import { AlertModal } from '@/components/modal/alert-modal';
 import { deleteProduct } from '@/lib/actions';
 
@@ -25,7 +24,6 @@ export default function InventoryContainer({
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 5;
   const [open, setOpen] = useState(false);
-  const [createProductModal, setCreateProductModal] = useState(false);
   const [deleteProductId, setDeleteProductId] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +41,7 @@ export default function InventoryContainer({
   };
 
   return (
-    <div>
+    <>
       {deleteProductId && (
         <AlertModal
           title="Delete Product"
@@ -61,10 +59,7 @@ export default function InventoryContainer({
 
       <PageContainer scrollable>
         <div className="space-y-4">
-          <InventoryHeader
-            setProductDialogOpen={setCreateProductModal}
-            total={total}
-          />
+          <InventoryHeader total={total} />
           <Separator />
 
           <DataTable
@@ -74,22 +69,8 @@ export default function InventoryContainer({
             limit={pageLimit}
             total={total}
           />
-          {createProductModal && (
-            <ProductCreateModal
-              isOpen={createProductModal}
-              product={null}
-              onClose={() => setCreateProductModal(false)}
-            />
-          )}
-          {/* {selectedProduct && (
-            <InventoryAdjustForm
-              product={selectedProduct}
-              open={openAdjustModal}
-              onOpenChange={setOpenAdjustModal}
-            />
-          )} */}
         </div>
       </PageContainer>
-    </div>
+    </>
   );
 }

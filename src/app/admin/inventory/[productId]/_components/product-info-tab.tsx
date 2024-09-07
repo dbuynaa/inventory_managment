@@ -1,7 +1,6 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState } from 'react';
 import ProductCreateModal from '../../_components/product-create-modal';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
@@ -12,24 +11,17 @@ export default function ProductInfoTab({
 }: {
   productDetails: Product;
 }) {
-  const [updateModalOpen, setUpdateModalOpen] = useState(false);
-
   return (
     <>
-      {updateModalOpen && (
-        <ProductCreateModal
-          onClose={() => setUpdateModalOpen(false)}
-          product={productDetails}
-          isOpen={updateModalOpen}
-        />
-      )}
       <Card>
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-between">
             Product Information
-            <Button variant="ghost" onClick={() => setUpdateModalOpen(true)}>
-              <Icons.edit className="h-4 w-4" />
-            </Button>
+            <ProductCreateModal product={productDetails}>
+              <Button variant="ghost">
+                <Icons.edit className="h-4 w-4" />
+              </Button>
+            </ProductCreateModal>
           </CardTitle>
         </CardHeader>
         <CardContent>

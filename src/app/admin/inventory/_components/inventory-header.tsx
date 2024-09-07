@@ -2,20 +2,14 @@ import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Package } from 'lucide-react';
+import ProductCreateModal from './product-create-modal';
 
-export default function InventoryHeader({
-  total,
-  setProductDialogOpen
-}: {
-  total: number;
-  setProductDialogOpen: (open: boolean) => void;
-}) {
-  // const [searchTerm, setSearchTerm] = useState('');
+export default function InventoryHeader({ total }: { total: number }) {
   return (
     <div className="flex items-start justify-between">
       <Heading
         title={`Total Products (${total})`}
-        // description="Manage employees (Server side table functionalities.)"
+        description="Manage your products and their inventory"
       />
       <div className="flex space-x-4">
         <Input
@@ -25,13 +19,11 @@ export default function InventoryHeader({
           //   value={searchTerm}
           //   onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Button
-          variant="default"
-          onClick={() => setProductDialogOpen(true)}
-          // className="w-full"
-        >
-          <Package className="mr-2 h-4 w-4" /> Add New Product
-        </Button>
+        <ProductCreateModal product={null}>
+          <Button variant="default">
+            <Package className="mr-2 h-4 w-4" /> Add New Product
+          </Button>
+        </ProductCreateModal>
       </div>
     </div>
   );
