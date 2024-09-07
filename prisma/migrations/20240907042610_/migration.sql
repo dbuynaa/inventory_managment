@@ -2,10 +2,13 @@
 CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED');
 
 -- CreateEnum
-CREATE TYPE "AdjustmentType" AS ENUM ('INCREASE', 'DECREASE', 'ADJUSTED', 'WRITTEN_OFF');
+CREATE TYPE "SalesStatus" AS ENUM ('PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED');
 
 -- CreateEnum
-CREATE TYPE "ChangeType" AS ENUM ('INCREASE', 'DECREASE');
+CREATE TYPE "AdjustmentType" AS ENUM ('INCREASE', 'DECREASE', 'CORRECTION', 'WRITTEN_OFF');
+
+-- CreateEnum
+CREATE TYPE "ChangeType" AS ENUM ('SALE', 'PURCHASE', 'ADJUSTMENT');
 
 -- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'MANAGER', 'STAFF');
@@ -18,6 +21,7 @@ CREATE TABLE "PurchaseOrder" (
     "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
     "totalAmount" DOUBLE PRECISION NOT NULL,
     "supplierId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -27,7 +31,7 @@ CREATE TABLE "PurchaseOrder" (
 -- CreateTable
 CREATE TABLE "PurchaseOrderDetail" (
     "id" TEXT NOT NULL,
-    "quantityOrdered" INTEGER NOT NULL,
+    "quantity" INTEGER NOT NULL,
     "pricePerUnit" DOUBLE PRECISION NOT NULL,
     "totalPrice" DOUBLE PRECISION NOT NULL,
     "purchaseOrderId" TEXT NOT NULL,
@@ -85,10 +89,12 @@ CREATE TABLE "Supplier" (
 CREATE TABLE "Sale" (
     "id" TEXT NOT NULL,
     "saleDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "total_amount" DOUBLE PRECISION NOT NULL,
-    "payment_method" TEXT NOT NULL,
-    "status" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "totalAmount" DOUBLE PRECISION NOT NULL,
+    "paymentMethod" TEXT NOT NULL,
+    "status" "SalesStatus" NOT NULL,
+    "customerId" TEXT NOT NULL,
+    "createdBy" TEXT,
+    "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Sale_pkey" PRIMARY KEY ("id")
 );
@@ -96,9 +102,9 @@ CREATE TABLE "Sale" (
 -- CreateTable
 CREATE TABLE "SalesDetail" (
     "id" TEXT NOT NULL,
-    "quantity_sold" INTEGER NOT NULL,
-    "price_per_unit" DOUBLE PRECISION NOT NULL,
-    "total_price" DOUBLE PRECISION NOT NULL,
+    "quantitySold" INTEGER NOT NULL,
+    "pricePerUnit" DOUBLE PRECISION NOT NULL,
+    "totalPrice" DOUBLE PRECISION NOT NULL,
     "saleId" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
 
@@ -114,6 +120,7 @@ CREATE TABLE "InventoryAdjustment" (
     "userId" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "inventoryLogId" TEXT NOT NULL,
 
     CONSTRAINT "InventoryAdjustment_pkey" PRIMARY KEY ("id")
 );
@@ -138,7 +145,7 @@ CREATE TABLE "InventoryLog" (
     "changeType" "ChangeType" NOT NULL,
     "quantityChange" INTEGER NOT NULL,
     "changedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "reference_id" INTEGER,
+    "referenceId" TEXT,
     "productId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -152,7 +159,7 @@ CREATE TABLE "Customer" (
     "email" TEXT,
     "phone" TEXT NOT NULL,
     "address" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Customer_pkey" PRIMARY KEY ("id")
 );
@@ -180,6 +187,9 @@ CREATE UNIQUE INDEX "Product_barcode_key" ON "Product"("barcode");
 CREATE UNIQUE INDEX "Supplier_phoneNumber_key" ON "Supplier"("phoneNumber");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "InventoryAdjustment_inventoryLogId_key" ON "InventoryAdjustment"("inventoryLogId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Customer_phone_key" ON "Customer"("phone");
 
 -- CreateIndex
@@ -187,6 +197,9 @@ CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");
 
 -- AddForeignKey
 ALTER TABLE "PurchaseOrder" ADD CONSTRAINT "PurchaseOrder_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PurchaseOrder" ADD CONSTRAINT "PurchaseOrder_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "PurchaseOrderDetail" ADD CONSTRAINT "PurchaseOrderDetail_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES "PurchaseOrder"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -210,6 +223,9 @@ ALTER TABLE "Product" ADD CONSTRAINT "Product_addressId_fkey" FOREIGN KEY ("addr
 ALTER TABLE "Supplier" ADD CONSTRAINT "Supplier_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Sale" ADD CONSTRAINT "Sale_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "SalesDetail" ADD CONSTRAINT "SalesDetail_saleId_fkey" FOREIGN KEY ("saleId") REFERENCES "Sale"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -220,6 +236,9 @@ ALTER TABLE "InventoryAdjustment" ADD CONSTRAINT "InventoryAdjustment_userId_fke
 
 -- AddForeignKey
 ALTER TABLE "InventoryAdjustment" ADD CONSTRAINT "InventoryAdjustment_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "InventoryAdjustment" ADD CONSTRAINT "InventoryAdjustment_inventoryLogId_fkey" FOREIGN KEY ("inventoryLogId") REFERENCES "InventoryLog"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "InventoryLog" ADD CONSTRAINT "InventoryLog_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
