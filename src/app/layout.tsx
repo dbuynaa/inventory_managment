@@ -30,7 +30,7 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en" className={`${inter.variable}`}>
+    <html lang="en" className={`${inter.className}`}>
       <body>
         <TRPCReactProvider>
           <Providers session={session}>

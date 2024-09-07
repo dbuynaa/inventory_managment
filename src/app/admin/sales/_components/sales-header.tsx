@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/popover';
 import SalesCreateModal from './sales-create-modal';
 import { OrderStatus } from '@prisma/client';
+import { type DateRange } from 'react-day-picker';
 
 export const SalesHeader = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,6 +29,14 @@ export const SalesHeader = () => {
     from: Date | null;
     to: Date | null;
   }>({ from: null, to: null });
+
+  const handleDateRangeSelect = (range: DateRange | undefined) => {
+    setDateRange(
+      range
+        ? { from: range.from ?? null, to: range.to ?? null }
+        : { from: null, to: null }
+    );
+  };
 
   return (
     <div className="mb-6 flex flex-col gap-4 md:flex-row">
@@ -72,8 +81,11 @@ export const SalesHeader = () => {
             initialFocus
             mode="range"
             defaultMonth={dateRange.from ?? new Date()}
-            // selected={dateRange}
-            // onSelect={setDateRange}
+            selected={{
+              from: dateRange.from ?? undefined,
+              to: dateRange.to ?? undefined
+            }}
+            onSelect={handleDateRangeSelect}
             numberOfMonths={2}
           />
         </PopoverContent>

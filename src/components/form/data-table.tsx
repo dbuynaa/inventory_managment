@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import React from 'react';
+import { useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -46,7 +46,7 @@ export function DataTable<TData, TValue>({
   limit = 5,
   total
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
     data,
     columns,
