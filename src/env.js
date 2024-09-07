@@ -9,6 +9,7 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     DATABASE_PRISMA_URL: z.string().url(),
+    DATABASE_URL_NON_POOLING: z.string().url(),
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),
@@ -40,10 +41,13 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_URL_NON_POOLING: process.env.DATABASE_URL_NON_POOLING,
     DATABASE_PRISMA_URL: process.env.DATABASE_PRISMA_URL,
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL
+    // DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
+    // DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
