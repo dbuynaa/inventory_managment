@@ -62,7 +62,7 @@ export const salesRouter = createTRPCRouter({
       await ctx.db.inventoryLog.createMany({
         data: input.products.map((product) => ({
           changeType: 'SALE',
-          quantityChange: product.quantitySold,
+          quantityChange: -product.quantitySold,
           productId: product.productId
         }))
       });

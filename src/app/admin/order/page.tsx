@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { OrderCards } from './_components/order-cards';
 import { OrderDetails } from './_components/order-details';
 import { OrderDataTable } from './_components/orders-table';
+import OrderDataTableLoading from './_components/orders-table-loading';
 
 export const metadata = {
   title: 'Order Page',
@@ -22,7 +23,7 @@ export default function OrderPage({ searchParams }: paramsProps) {
           className={`${orderId ? 'lg:col-span-2' : 'col-span-3'} grid auto-rows-max items-start gap-4 md:gap-8`}
         >
           <OrderCards />
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<OrderDataTableLoading />}>
             <OrderDataTable page={page} limit={pageLimit} />
           </Suspense>
         </div>
