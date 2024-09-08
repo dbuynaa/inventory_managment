@@ -12,17 +12,17 @@ type InventoryLogShape = InventoryLog & {
 export const columns: ColumnDef<InventoryLogShape>[] = [
   {
     accessorKey: 'product',
-    header: 'Product',
+    header: 'Бүтээгдэхүүн',
     accessorFn: (row) => row.product.name
   },
   {
     accessorKey: 'changedAt',
-    header: 'Date',
+    header: 'Огноо',
     accessorFn: (row) => new Date(row.changedAt).toLocaleDateString()
   },
   {
     accessorKey: 'quantityChange',
-    header: 'Change',
+    header: 'Өөрчлөлт',
     cell: ({ row }) => {
       return (
         <span
@@ -38,15 +38,15 @@ export const columns: ColumnDef<InventoryLogShape>[] = [
   },
   {
     accessorKey: 'changeType',
-    header: 'Type'
+    header: 'Төрөл'
   },
   {
     accessorKey: 'referenceId',
-    header: 'Reference'
+    header: 'Сэргийлэл'
   },
   {
     accessorKey: 'id',
-    header: 'Actions',
+    header: 'Үйлдлүүд',
     cell: () => {
       return (
         <div className="flex space-x-2">

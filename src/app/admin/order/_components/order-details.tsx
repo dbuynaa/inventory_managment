@@ -46,50 +46,50 @@ export async function OrderDetails({ orderId }: { orderId: string }) {
               className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
             >
               <Copy className="h-3 w-3" />
-              <span className="sr-only">Copy Order ID</span>
+              <span className="sr-only">Захиалгын ID-ийг хуулбарлах</span>
             </Button>
           </CardTitle>
           <CardDescription>
-            Date: {format(data.createdAt, 'dd MMM yyyy')}
+            Огноо: {format(data.createdAt, 'dd MMM yyyy')}
           </CardDescription>
         </div>
         <div className="ml-auto flex items-center gap-1">
           <Button size="sm" variant="outline" className="h-8 gap-1">
             <Truck className="h-3.5 w-3.5" />
             <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-              Track Order
+              Захиалгыг хянах
             </span>
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="icon" variant="outline" className="h-8 w-8">
                 <MoreVertical className="h-3.5 w-3.5" />
-                <span className="sr-only">More</span>
+                <span className="sr-only">Илүү их</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Export</DropdownMenuItem>
+              <DropdownMenuItem>Засах</DropdownMenuItem>
+              <DropdownMenuItem>Экспортлох</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Trash</DropdownMenuItem>
+              <DropdownMenuItem>Хаях</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </CardHeader>
       <CardContent className="p-6 text-sm">
         <div className="grid gap-3">
-          <div className="font-semibold">Purchase Information</div>
+          <div className="font-semibold">Үйлдвэрлэлийн Мэдээлэл</div>
           <dl className="grid gap-3">
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Status</dt>
+              <dt className="text-muted-foreground">Төлөв</dt>
               <dd>{data.status}</dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground"> Expected Delivery</dt>
+              <dt className="text-muted-foreground">Хүлээгдэж буй Дата</dt>
               <dd>{format(data.expectedDeliveryDate, 'dd MMM yyyy')}</dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Total Price</dt>
+              <dt className="text-muted-foreground">Нийт Үнийн Дүн</dt>
               <dd>
                 <a href="mailto:">${data.totalAmount}</a>
               </dd>
@@ -99,7 +99,7 @@ export async function OrderDetails({ orderId }: { orderId: string }) {
         <Separator className="my-4" />
 
         <div className="grid gap-3">
-          <div className="font-semibold">Order Details</div>
+          <div className="font-semibold">Захиалгын Дэлгэрэнгүй Мэдээлэл</div>
           <ul className="grid gap-3">
             {data.purchaseOrderDetails.map((item) => (
               <li key={item.id} className="flex items-center justify-between">
@@ -115,20 +115,20 @@ export async function OrderDetails({ orderId }: { orderId: string }) {
 
         <Separator className="my-4" />
         <div className="grid gap-3">
-          <div className="font-semibold">Supplier Information</div>
+          <div className="font-semibold">Ний supplier-ийн Мэдээлэл</div>
           <dl className="grid gap-3">
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Name</dt>
+              <dt className="text-muted-foreground">Нэр</dt>
               <dd>{data.supplier.name}</dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Email</dt>
+              <dt className="text-muted-foreground">Имэйл</dt>
               <dd>
                 <a href="mailto:">{data.supplier.email}</a>
               </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Phone</dt>
+              <dt className="text-muted-foreground">Утас</dt>
               <dd>
                 <a href="tel:">{data.supplier.phoneNumber}</a>
               </dd>
@@ -137,7 +137,7 @@ export async function OrderDetails({ orderId }: { orderId: string }) {
         </div>
         <Separator className="my-4" />
         <div className="grid gap-3">
-          <div className="font-semibold">Payment Information</div>
+          <div className="font-semibold">Төлбөрийн Мэдээлэл</div>
           <dl className="grid gap-3">
             <div className="flex items-center justify-between">
               <dt className="flex items-center gap-1 text-muted-foreground">
@@ -151,20 +151,20 @@ export async function OrderDetails({ orderId }: { orderId: string }) {
       </CardContent>
       <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
         <div className="text-xs text-muted-foreground">
-          Updated <time dateTime="2023-11-23">November 23, 2023</time>
+          Шинэчлэгдсэн <time dateTime="2023-11-23">2023 оны 11-р сарын 23</time>
         </div>
         <Pagination className="ml-auto mr-0 w-auto">
           <PaginationContent>
             <PaginationItem>
               <Button size="icon" variant="outline" className="h-6 w-6">
                 <ChevronLeft className="h-3.5 w-3.5" />
-                <span className="sr-only">Previous Order</span>
+                <span className="sr-only">Өмнөх Захиалга</span>
               </Button>
             </PaginationItem>
             <PaginationItem>
               <Button size="icon" variant="outline" className="h-6 w-6">
                 <ChevronRight className="h-3.5 w-3.5" />
-                <span className="sr-only">Next Order</span>
+                <span className="sr-only">Дараагийн Захиалга</span>
               </Button>
             </PaginationItem>
           </PaginationContent>

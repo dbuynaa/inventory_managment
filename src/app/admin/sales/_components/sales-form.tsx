@@ -1,3 +1,5 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -29,7 +31,7 @@ type Sale = z.infer<typeof salesCreateInput>;
 
 interface SaleFormProps {
   onSubmit: (customer: Sale) => void;
-  initialData?: Sale;
+  initialData?: Sale; // Эхний өгөгдөл
 }
 
 export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
@@ -116,11 +118,12 @@ export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
           name="customerId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Customer</FormLabel>
+              <FormLabel>Хэрэглэгч</FormLabel> {/* Customer */}
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select customer" />
+                    <SelectValue placeholder="Хэрэглэгч сонгоно уу" />{' '}
+                    {/* Select customer */}
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -140,18 +143,23 @@ export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
           name="paymentMethod"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Payment Method</FormLabel>
+              <FormLabel>Төлбөрийн арга</FormLabel> {/* Payment Method */}
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select payment method" />
+                    <SelectValue placeholder="Төлбөрийн арга сонгоно уу" />{' '}
+                    {/* Select payment method */}
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Credit Card">Credit Card</SelectItem>
+                  <SelectItem value="Credit Card">Кредит карт</SelectItem>{' '}
+                  {/* Credit Card */}
                   <SelectItem value="PayPal">PayPal</SelectItem>
-                  <SelectItem value="Cash">Cash</SelectItem>
-                  <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                  <SelectItem value="Cash">Налуу</SelectItem> {/* Cash */}
+                  <SelectItem value="Bank Transfer">
+                    Банкин шилжүүлэг
+                  </SelectItem>{' '}
+                  {/* Bank Transfer */}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -163,11 +171,12 @@ export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
           name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Status</FormLabel>
+              <FormLabel>Байдал</FormLabel> {/* Status */}
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
+                    <SelectValue placeholder="Байдал сонгоно уу" />{' '}
+                    {/* Select status */}
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -189,14 +198,15 @@ export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
               name={`products.${index}.productId`}
               render={({ field }) => (
                 <FormItem className="col-span-3">
-                  <FormLabel>Product</FormLabel>
+                  <FormLabel>Бүтээгдэхүүн</FormLabel> {/* Product */}
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select product" />
+                        <SelectValue placeholder="Бүтээгдэхүүн сонгоно уу" />{' '}
+                        {/* Select product */}
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -217,7 +227,7 @@ export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
               name={`products.${index}.quantitySold`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Quantity</FormLabel>
+                  <FormLabel>Тоо хэмжээ</FormLabel> {/* Quantity */}
                   <FormControl>
                     <Input
                       type="number"
@@ -237,7 +247,7 @@ export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
               name={`products.${index}.pricePerUnit`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Price Per Unit</FormLabel>
+                  <FormLabel>Нэгж үнэ</FormLabel> {/* Price Per Unit */}
                   <FormControl>
                     <Input type="number" {...field} readOnly min={1} />
                   </FormControl>
@@ -250,7 +260,7 @@ export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
               name={`products.${index}.totalPrice`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Total Price</FormLabel>
+                  <FormLabel>Нийт үнэ</FormLabel> {/* Total Price */}
                   <FormControl>
                     <Input
                       type="number"
@@ -276,10 +286,11 @@ export default function SaleForm({ onSubmit, initialData }: SaleFormProps) {
           </div>
         ))}
         <Button onClick={handleAddProduct} variant="outline">
-          <PlusIcon className="mr-2 h-4 w-4" /> Add Product
+          <PlusIcon className="mr-2 h-4 w-4" /> Бүтээгдэхүүн нэмэх
+          {/* Add Product */}
         </Button>
         <DialogFooter>
-          <Button type="submit">Create Sale</Button>
+          <Button type="submit">Борлуулалт үүсгэх</Button> {/* Create Sale */}
         </DialogFooter>
       </form>
     </Form>

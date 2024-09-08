@@ -23,6 +23,7 @@ import { columns } from './';
 type InventoryLogShape = InventoryLog & {
   product: Product;
 };
+
 export function InventoryLogsContainer({
   inventoryLogs,
   total,
@@ -39,32 +40,32 @@ export function InventoryLogsContainer({
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="mb-6 text-3xl font-bold">Inventory Logs</h1>
+      <h1 className="mb-6 text-3xl font-bold">Барааны Түүх</h1>
 
       <div className="mb-6 flex flex-col gap-4 md:flex-row">
         <Input
-          placeholder="Search by product name..."
+          placeholder="Бүтээгдэхүүний нэрээр хайх..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="md:w-1/3"
         />
         <Select value={changeTypeFilter} onValueChange={setChangeTypeFilter}>
           <SelectTrigger className="md:w-1/4">
-            <SelectValue placeholder="Filter by change type" />
+            <SelectValue placeholder="Өөрчлөлтийн төрлөөр шүүх" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="All">All Types</SelectItem>
-            <SelectItem value="Sale">Sale</SelectItem>
-            <SelectItem value="Purchase">Purchase</SelectItem>
-            <SelectItem value="Adjustment">Adjustment</SelectItem>
+            <SelectItem value="All">Бүх төрлүүд</SelectItem>
+            <SelectItem value="Sale">Борлуулалт</SelectItem>
+            <SelectItem value="Purchase">Худалдан авалт</SelectItem>
+            <SelectItem value="Adjustment">Тохируулга</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Inventory Log List</CardTitle>
-          <CardDescription>View all inventory changes</CardDescription>
+          <CardTitle>Барааны Түүхийн Жагсаалт</CardTitle>
+          <CardDescription>Бүх барааны өөрчлөлтийг үзэх</CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable

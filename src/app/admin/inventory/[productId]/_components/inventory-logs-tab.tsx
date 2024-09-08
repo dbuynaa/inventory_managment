@@ -21,7 +21,7 @@ export default async function InventoryLogsTab({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Stock History</CardTitle>
+        <CardTitle>Нөөцийн Түүх</CardTitle>
       </CardHeader>
       <CardContent>
         <DataTable

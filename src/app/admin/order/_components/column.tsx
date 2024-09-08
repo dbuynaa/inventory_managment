@@ -14,29 +14,29 @@ type PurchaseOrderShape = PurchaseOrder & {
 export const columns: ColumnDef<PurchaseOrderShape>[] = [
   {
     accessorKey: 'supplier.name',
-    header: 'Supplier'
+    header: 'Нийлүүлэгч'
   },
   {
     accessorKey: 'orderDate',
-    header: 'Order Date',
+    header: 'Захиалгын Огноо',
     cell: ({ getValue }) => {
       return new Date(getValue<Date>()).toLocaleDateString();
     }
   },
   {
     accessorKey: 'expectedDeliveryDate',
-    header: 'Delivery Date',
+    header: 'Хүргэх Огноо',
     cell: ({ getValue }) => {
       return new Date(getValue<Date>()).toLocaleDateString();
     }
   },
   {
     accessorKey: 'status',
-    header: 'Status'
+    header: 'Төлөв'
   },
   {
     accessorKey: 'totalAmount',
-    header: 'Total Amount',
+    header: 'Нийт Дүн',
     cell: ({ getValue }) => {
       return `$${getValue<number>().toFixed(2)}`;
     }

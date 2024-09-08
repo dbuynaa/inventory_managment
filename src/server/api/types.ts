@@ -1,4 +1,4 @@
-import { SalesStatus } from '@prisma/client';
+import { AdjustmentType, SalesStatus } from '@prisma/client';
 import { z } from 'zod';
 export const loginSchema = z.object({
   phoneNumber: z.string().min(1, { message: 'Phone number is required' }),
@@ -33,8 +33,8 @@ export const supplierCreateInput = z.object({
 export const adjustmentCreateInput = z.object({
   productId: z.string(),
   quantityAdjusted: z.coerce.number(),
-  reason: z.string()
-  // adjustmentType: z.enum(AdjustmentType.ADJUSTED, )
+  reason: z.string(),
+  adjustmentType: z.nativeEnum(AdjustmentType)
 });
 
 export const orderCreateInput = z.object({

@@ -25,8 +25,8 @@ export default function ProductCreateModal({
 
       <DialogContent className="md:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Create Product</DialogTitle>
-          <DialogDescription>Create a new product</DialogDescription>
+          <DialogTitle>Бүтээгдэхүүн үүсгэх</DialogTitle>
+          <DialogDescription>Шинэ бүтээгдэхүүн үүсгэх</DialogDescription>
         </DialogHeader>
         <ProductForm
           onComplete={() => setIsDialogOpen(false)}

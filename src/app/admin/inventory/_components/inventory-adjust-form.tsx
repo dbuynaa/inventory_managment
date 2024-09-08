@@ -16,11 +16,18 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { adjustmentCreateAction } from '@/lib/actions';
 import { adjustmentCreateInput } from '@/server/api/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Product } from '@prisma/client';
+import { AdjustmentType, type Product } from '@prisma/client';
 import { DialogTrigger } from '@radix-ui/react-dialog';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -71,7 +78,7 @@ export default function InventoryAdjustForm({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adjust Inventory for {product.name}</DialogTitle>
+          <DialogTitle>{product.name} барааны тохиргоог хийх</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -81,11 +88,11 @@ export default function InventoryAdjustForm({
               name="quantityAdjusted"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantity</FormLabel>
+                  <FormLabel>Тоо ширхэг</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="Enter quantity"
+                      placeholder="Тоо хэмжээг оруулна уу"
                       {...field}
                     />
                   </FormControl>
@@ -93,12 +100,12 @@ export default function InventoryAdjustForm({
                 </FormItem>
               )}
             />
-            {/* <FormField
+            <FormField
               control={form.control}
               name="adjustmentType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Adjustment Type</FormLabel>
+                  <FormLabel>Тохируулгын төрөл</FormLabel>
                   <Select
                     // disabled={isPending}
                     onValueChange={field.onChange}
@@ -109,7 +116,7 @@ export default function InventoryAdjustForm({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value || ''}
-                          placeholder="Adjustment Type"
+                          placeholder="Тохируулгын төрөл"
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -124,16 +131,16 @@ export default function InventoryAdjustForm({
                   <FormMessage />
                 </FormItem>
               )}
-            /> */}
+            />
             <FormField
               control={form.control}
               name="reason"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Reason</FormLabel>
+                  <FormLabel>Шалтгаан</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter reason for adjustment"
+                      placeholder="Тохируулах шалтгааныг оруулна уу"
                       {...field}
                       type="text"
                     />
@@ -144,7 +151,7 @@ export default function InventoryAdjustForm({
             />
             {/* {state?.errors && <p className={'text-red-500'}>{state.message}</p>} */}
             <Button disabled={isPending} type="submit">
-              Save Changes
+              Хадгалах
             </Button>
           </form>
         </Form>

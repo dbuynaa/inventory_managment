@@ -12,8 +12,8 @@ import { salesColumns } from './_components/column';
 import { SalesHeader } from './_components/sales-header';
 
 export const metadata: Metadata = {
-  title: 'Sales Management',
-  description: 'Manage and view all sales records'
+  title: 'Борлуулалтын Удирдлага',
+  description: 'Бүх борлуулалтын бүртгэлүүдийг удирдах болон харах'
 };
 
 interface paramsProps {
@@ -29,11 +29,13 @@ export default async function SalesPage({ searchParams }: paramsProps) {
   const { data, total } = sales;
   return (
     <div className="container mx-auto p-4">
-      <h1 className="mb-6 text-3xl font-bold">Sales Management</h1>
+      <h1 className="mb-6 text-3xl font-bold">Борлуулалтын Удирдлага</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Sales List</CardTitle>
-          <CardDescription>Manage and view all sales records</CardDescription>
+          <CardTitle>Борлуулалтын Жагсаалт</CardTitle>
+          <CardDescription>
+            Бүх борлуулалтын бүртгэлүүдийг удирдах болон харах
+          </CardDescription>
         </CardHeader>
 
         <CardContent>

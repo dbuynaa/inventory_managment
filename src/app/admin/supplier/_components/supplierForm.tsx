@@ -42,6 +42,7 @@ export default function SupplierForm({
           email: ''
         }
   });
+
   async function onSubmit(data: SupplierFormData) {
     setLoading(true);
     const res = await createOrUpdateSupplier({
@@ -52,7 +53,7 @@ export default function SupplierForm({
       setLoading(false);
       toast({
         title: res.message,
-        description: 'Supplier saved successfully',
+        description: 'Нийлүүлэгч амжилттай хадгалагдлаа',
         variant: 'default'
       });
       onSuccess?.();
@@ -68,9 +69,9 @@ export default function SupplierForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Нийлүүлэгчийн нэр</FormLabel>
               <FormControl>
-                <Input placeholder="Enter supplier" {...field} />
+                <Input placeholder="Нийлүүлэгчийн нэр оруулна уу" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -82,9 +83,9 @@ export default function SupplierForm({
           name="phoneNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+              <FormLabel>Утасны дугаар</FormLabel>
               <FormControl>
-                <Input placeholder="Enter phone number" {...field} />
+                <Input placeholder="Утасны дугаар оруулна уу" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,9 +96,13 @@ export default function SupplierForm({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>И-мэйл</FormLabel>
               <FormControl>
-                <Input placeholder="Enter email" {...field} type="email" />
+                <Input
+                  placeholder="И-мэйл оруулна уу"
+                  {...field}
+                  type="email"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -105,7 +110,9 @@ export default function SupplierForm({
         />
         {/* {state?.errors && <p className={'text-red-500'}>{state.message}</p>} */}
         <Button disabled={loading} type="submit">
-          {initialData ? 'Update Supplier' : 'Add Supplier'}
+          {initialData
+            ? 'Нийлүүлэгчийн мэдээллийг шинэчлэх'
+            : 'Нийлүүлэгч нэмэх'}
         </Button>
       </form>
     </Form>

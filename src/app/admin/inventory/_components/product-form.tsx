@@ -40,7 +40,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 }) => {
   const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
-  const action = initialData ? 'Save changes' : 'Create';
+  const action = initialData ? 'Өөрчлөлтийг хадгалах' : 'Бүтээгдэхүүн нэмэх';
 
   const { data: suppliers } = api.supplier.getMany.useQuery({
     limit: 100,
@@ -72,12 +72,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     });
     if (success) {
       toast({
-        title: 'Success',
+        title: 'Амжилттай',
         description: message
       });
     } else {
       toast({
-        title: 'Error',
+        title: 'Алдаа гарлаа',
         description: message
       });
     }
@@ -97,20 +97,20 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <div className="gap-8 md:grid md:grid-cols-2">
             <FormInput
               form={form}
-              label="Name"
+              label="Нэр"
               name="name"
               inputProps={{
                 disabled: isPending,
-                placeholder: 'Product name'
+                placeholder: 'Бүтээгдэхүүний нэр'
               }}
             />
             <FormInput
               form={form}
-              label="Description"
+              label="Тайлбар"
               name="description"
               inputProps={{
                 disabled: isPending,
-                placeholder: 'Product description'
+                placeholder: 'Бүтээгдэхүүний тайлбар'
               }}
             />
             <FormField
@@ -118,7 +118,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>Ангилал</FormLabel>
                   <Select
                     disabled={isPending}
                     onValueChange={field.onChange}
@@ -129,7 +129,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select a category"
+                          placeholder="Ангилал сонгох"
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -150,7 +150,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="supplierId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Supplier</FormLabel>
+                  <FormLabel>Нийлүүлэгч</FormLabel>
                   <Select
                     disabled={isPending}
                     onValueChange={field.onChange}
@@ -161,7 +161,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select a supplier"
+                          placeholder="Нийлүүлэгч сонгох"
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -179,7 +179,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
             <FormInput
               form={form}
-              label="Price"
+              label="Үнэ"
               name="price"
               inputProps={{
                 type: 'number',
@@ -188,19 +188,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
             <FormInput
               form={form}
-              label="Quantity"
+              label="Нөөцийн хэмжээ"
               name="quantityOnStock"
               inputProps={{ disabled: isPending, type: 'number' }}
             />
             <FormInput
               form={form}
-              label="Cost Price"
+              label="Өртгийн үнэ"
               name="costPrice"
               inputProps={{ disabled: isPending, type: 'number' }}
             />
             <FormInput
               form={form}
-              label="Reorder Level"
+              label="Дахин захиалгын түвшин"
               name="reorderLevel"
               inputProps={{ disabled: isPending, type: 'number' }}
             />

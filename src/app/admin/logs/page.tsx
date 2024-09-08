@@ -7,8 +7,8 @@ interface paramsProps {
 }
 
 export const metadata: Metadata = {
-  title: 'Inventory Logs',
-  description: 'Admin inventory logs page'
+  title: 'Барааны бүртгэл',
+  description: 'Админ барааны бүртгэлийн хуудс'
 };
 
 export default async function InventoryLogsPage({ searchParams }: paramsProps) {

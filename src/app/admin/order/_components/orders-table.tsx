@@ -36,39 +36,41 @@ export async function OrderDataTable({
     <Tabs defaultValue="week">
       <div className="flex items-center">
         <TabsList>
-          <TabsTrigger value="week">Week</TabsTrigger>
-          <TabsTrigger value="month">Month</TabsTrigger>
-          <TabsTrigger value="year">Year</TabsTrigger>
+          <TabsTrigger value="week">Долоо хоног</TabsTrigger>
+          <TabsTrigger value="month">Сар</TabsTrigger>
+          <TabsTrigger value="year">Жил</TabsTrigger>
         </TabsList>
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-7 gap-1 text-sm">
                 <ListFilter className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only">Filter</span>
+                <span className="sr-only sm:not-sr-only">Шүүлт</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+              <DropdownMenuLabel>Шүүхийн төрлүүд</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem checked>
-                Fulfilled
+                Хэрэгжүүлсэн
               </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>Declined</DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>Refunded</DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem>Татгалзсан</DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem>Буцаагдсан</DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Button size="sm" variant="outline" className="h-7 gap-1 text-sm">
             <File className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only">Export</span>
+            <span className="sr-only sm:not-sr-only">Экспортлох</span>
           </Button>
         </div>
       </div>
       <TabsContent value="week">
         <Card x-chunk="dashboard-05-chunk-3">
           <CardHeader className="px-7">
-            <CardTitle>Orders</CardTitle>
-            <CardDescription>Recent orders from your store.</CardDescription>
+            <CardTitle>Захиалгууд</CardTitle>
+            <CardDescription>
+              Таны дэлгүүрээс сүүлийн үеийн захиалгууд.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <DataTable

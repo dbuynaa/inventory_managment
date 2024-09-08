@@ -41,14 +41,14 @@ export const SalesHeader = () => {
   return (
     <div className="mb-6 flex flex-col gap-4 md:flex-row">
       <Input
-        placeholder="Search by customer name..."
+        placeholder="Харилцагчийн нэрээр хайх..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="md:w-1/3"
       />
       <Select value={statusFilter} onValueChange={setStatusFilter}>
         <SelectTrigger className="md:w-1/4">
-          <SelectValue placeholder="Filter by status" />
+          <SelectValue placeholder="Статусаар шүүх" />
         </SelectTrigger>
         <SelectContent>
           {Object.values(OrderStatus).map((status) => (
@@ -72,7 +72,7 @@ export const SalesHeader = () => {
                 format(dateRange.from, 'LLL dd, y')
               )
             ) : (
-              <span>Pick a date range</span>
+              <span>Огноо сонгох</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -92,7 +92,7 @@ export const SalesHeader = () => {
       </Popover>
       <SalesCreateModal>
         <Button variant="default" className="md:w-1/4">
-          New Sale
+          Шинэ борлуулалт
         </Button>
       </SalesCreateModal>
     </div>

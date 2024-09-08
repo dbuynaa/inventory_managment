@@ -44,8 +44,8 @@ export default function InventoryContainer({
     <>
       {deleteProductId && (
         <AlertModal
-          title="Delete Product"
-          description="Are you sure you want to delete this product?"
+          title="Бараа устгах"
+          description="Та энэ барааг устгахдаа итгэлтэй байна уу?"
           isOpen={open}
           onClose={() => {
             setOpen(false);

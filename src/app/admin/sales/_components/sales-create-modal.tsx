@@ -15,12 +15,13 @@ export default function SalesCreateModal({
   children
 }: {
   children: React.ReactNode;
-  initialData?: Sales;
+  initialData?: Sales; // Эхний өгөгдөл
 }) {
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false); // Давагдашгүй модалын нээлт
 
   const handleSubmitSales = async (data: Omit<Sales, 'id'>) => {
     if (initialData?.id) {
+      // Шинэчлэлт хийх
       const updatedData = await salesUpdateAction({
         ...data,
         id: initialData.id
@@ -28,32 +29,33 @@ export default function SalesCreateModal({
 
       if (updatedData.success)
         toast({
-          title: 'Sales Updated',
+          title: 'Борлуулалт шинэчилсэн',
           description: updatedData.message
         });
 
       if (!updatedData.success)
         toast({
           variant: 'destructive',
-          title: 'Error',
+          title: 'Алдаа',
           description: updatedData.message
         });
     } else {
+      // Шинэ борлуулалт үүсгэх
       const createdData = await salesCreateAction(data);
       if (createdData.success)
         toast({
-          title: 'Sales Added',
+          title: 'Борлуулалт нэмсэн',
           description: createdData.message
         });
 
       if (!createdData.success)
         toast({
           variant: 'destructive',
-          title: 'Error',
+          title: 'Алдаа',
           description: createdData.message
         });
     }
-    setIsAddDialogOpen(false);
+    setIsAddDialogOpen(false); // Модалыг хаах
   };
 
   return (

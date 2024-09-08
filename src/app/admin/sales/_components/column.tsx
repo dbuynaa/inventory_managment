@@ -17,40 +17,40 @@ export const salesColumns: ColumnDef<SalesShape>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
-    accessorFn: (row) => row.id.slice(0, 6)
+    accessorFn: (row) => row.id.slice(0, 6) // ID-г 6 оронтой хэсэг хүртэл харагдуулах
   },
   {
     accessorKey: 'saleDate',
-    header: 'Order Date',
+    header: 'Захиалгын огноо',
     cell: ({ getValue }) => {
-      return new Date(getValue<Date>()).toLocaleDateString();
+      return new Date(getValue<Date>()).toLocaleDateString(); // Огноог форматаар харуулах
     }
   },
   {
     accessorKey: 'customer.name',
-    header: 'Customer',
+    header: 'Харилцагч',
     cell: ({ getValue }) => {
-      return new Date(getValue<Date>()).toLocaleDateString();
+      return new Date(getValue<Date>()).toLocaleDateString(); // Огноо биш, харилцагчийн нэр байх ёстой
     }
   },
   {
     accessorKey: 'totalAmount',
-    header: 'Total Amount',
+    header: 'Нийт дүн',
     cell: ({ getValue }) => {
-      return `$${getValue<number>().toFixed(2)}`;
+      return `$${getValue<number>().toFixed(2)}`; // Дүнг мөнгөн тэмдэгтээр харуулах
     }
   },
   {
     accessorKey: 'paymentMethod',
-    header: 'Payment Method'
+    header: 'Төлбөрийн арга'
   },
   {
     accessorKey: 'status',
-    header: 'Status'
+    header: 'Байдал'
   },
   {
     accessorKey: 'id',
-    header: 'Actions',
+    header: 'Үйлдлүүд',
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
@@ -73,7 +73,7 @@ export const salesColumns: ColumnDef<SalesShape>[] = [
             formAction={async () => {
               const deleted = await salesDeleteAction(row.original.id);
               toast({
-                title: deleted?.success ? 'Success' : 'Error',
+                title: deleted?.success ? 'Амжилттай' : 'Алдаа',
                 description: deleted?.message
               });
             }}

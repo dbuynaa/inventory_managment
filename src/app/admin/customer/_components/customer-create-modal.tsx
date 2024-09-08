@@ -28,28 +28,28 @@ export default function CustomerCreateModal({
 
       if (updatedData.success)
         toast({
-          title: 'Customer Updated',
+          title: 'Харилцагчийн мэдээлэл шинэчлэгдсэн',
           description: updatedData.message
         });
 
       if (!updatedData.success)
         toast({
           variant: 'destructive',
-          title: 'Error',
+          title: 'Алдаа',
           description: updatedData.message
         });
     } else {
       const createdData = await customerCreateAction(customer);
       if (createdData.success)
         toast({
-          title: 'Customer Added',
+          title: 'Харилцагч нэмэгдсэн',
           description: createdData.message
         });
 
       if (!createdData.success)
         toast({
           variant: 'destructive',
-          title: 'Error',
+          title: 'Алдаа',
           description: createdData.message
         });
     }

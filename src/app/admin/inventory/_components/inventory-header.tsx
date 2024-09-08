@@ -8,8 +8,8 @@ export default function InventoryHeader({ total }: { total: number }) {
   return (
     <div className="flex items-start justify-between">
       <Heading
-        title={`Total Products (${total})`}
-        description="Manage your products and their inventory"
+        title={`Нийт Бүтээгдэхүүн (${total})`}
+        description="Агуулахын бүтээгдэхүүний жагсаалт"
       />
       <div className="flex space-x-4">
         <Input
@@ -21,7 +21,7 @@ export default function InventoryHeader({ total }: { total: number }) {
         />
         <ProductCreateModal product={null}>
           <Button variant="default">
-            <Package className="mr-2 h-4 w-4" /> Add New Product
+            <Package className="mr-2 h-4 w-4" /> Шинэ Бүтээгдэхүүн
           </Button>
         </ProductCreateModal>
       </div>

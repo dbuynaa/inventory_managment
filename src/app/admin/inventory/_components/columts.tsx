@@ -8,8 +8,8 @@ import { type ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 import InventoryAdjustForm from './inventory-adjust-form';
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
+// Энэ төрлийг өгөгдлийн хэлбэрийг тодорхойлоход ашиглана.
+// Хэрэв хүсвэл энд Zod схем ашиглаж болно.
 // type ProductShape = Pick<
 //   Product,
 //   'id' | 'name' | 'price' | 'costPrice' | 'quantityOnStock' | 'createdAt'
@@ -20,29 +20,29 @@ export const columns = (
 ): ColumnDef<Product>[] => [
   {
     accessorKey: 'name',
-    header: 'Name'
+    header: 'Нэр'
   },
   {
     accessorKey: 'price',
-    header: 'Price'
+    header: 'Үнэ'
   },
   {
     accessorKey: 'costPrice',
-    header: 'Cost Price'
+    header: 'Өртгийн үнэ'
   },
   {
     accessorKey: 'quantityOnStock',
-    header: 'Quantity'
+    header: 'Нөөц'
   },
   {
     accessorKey: 'createdAt',
-    header: 'Created At',
+    header: 'Үүсгэсэн огноо',
     accessorFn: (row) => new Date(row.createdAt).toLocaleDateString()
   },
   {
     accessorKey: 'id',
     header: () => {
-      return <div className="pl-4">Actions</div>;
+      return <div className="pl-4">Үйлдлүүд</div>;
     },
     maxSize: 40,
     cell: ({ row }) => {

@@ -25,7 +25,7 @@ export default function InventoryDetailsPage({
     <>
       <div className="container mx-auto p-4">
         <h1 className="mb-6 text-3xl font-bold">
-          {productDetails.name} - Inventory Details
+          {productDetails.name} - Бараа материалын дэлгэрэнгүй
         </h1>
 
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -48,7 +48,7 @@ export default function InventoryDetailsPage({
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Current Stock
+                  Одоогийн нөөц
                 </CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -61,7 +61,7 @@ export default function InventoryDetailsPage({
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Retail Price
+                  Жижиглэнгийн үнэ
                 </CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -74,7 +74,7 @@ export default function InventoryDetailsPage({
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Reorder Level
+                  Захиалгын түвшин
                 </CardTitle>
                 <Truck className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -89,14 +89,14 @@ export default function InventoryDetailsPage({
 
         <Tabs defaultValue="details" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="details">Product Details</TabsTrigger>
-            <TabsTrigger value="history">Stock History</TabsTrigger>
+            <TabsTrigger value="details">Барааны дэлгэрэнгүй</TabsTrigger>
+            <TabsTrigger value="history">Нөөцийн түүх</TabsTrigger>
           </TabsList>
           <TabsContent value="details" className="space-y-4">
             <ProductInfoTab productDetails={productDetails} />
           </TabsContent>
           <TabsContent value="history">
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<div>Ачааллаж байна...</div>}>
               <InventoryLogsTab
                 searchParams={{ page: String(page), limit: String(limit) }}
                 productId={productDetails.id}
@@ -109,12 +109,12 @@ export default function InventoryDetailsPage({
           <InventoryAdjustForm product={productDetails}>
             <Button>
               <ArrowUpDown className="mr-2 h-4 w-4" />
-              Adjustment
+              Тохируулга хийх
             </Button>
           </InventoryAdjustForm>
           <Button variant="secondary">
             <BarChart2 className="mr-2 h-4 w-4" />
-            Generate Report
+            Тайлан үүсгэх
           </Button>
         </div>
 
@@ -125,13 +125,12 @@ export default function InventoryDetailsPage({
             <CardHeader>
               <CardTitle className="text-yellow-500 flex items-center">
                 <AlertTriangle className="mr-2 h-5 w-5" />
-                Low Stock Alert
+                Нөөц дуусч байна
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-                The current stock level is at or below the reorder level.
-                Consider restocking soon.
+                Одоогийн нөөцийн түвшин нь захиалгын түвшинд хүрсэн эсвэл бага байна. Удахгүй захиалга хийхийг анхаарна уу.
               </p>
             </CardContent>
           </Card>

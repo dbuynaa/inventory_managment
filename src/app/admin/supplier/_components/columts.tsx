@@ -7,8 +7,8 @@ import { type Supplier } from '@prisma/client';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { type ColumnDef } from '@tanstack/react-table';
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
+// Энэ төрлийг манай өгөгдлийн хэлбэрийг тодорхойлоход ашиглана.
+// Хэрэв хүсвэл Zod схемийг энд ашиглаж болно.
 // type Shape = Pick<
 //   Supplier,
 //   'id' | 'name' | 'email' | 'phoneNumber' | 'createdAt'
@@ -25,7 +25,7 @@ export const columns = (
           className="flex cursor-pointer items-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Name
+          Нэр
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </div>
       );
@@ -34,11 +34,11 @@ export const columns = (
   },
   {
     accessorKey: 'email',
-    header: 'Email'
+    header: 'Цахим шуудан'
   },
   {
     accessorKey: 'phoneNumber',
-    header: 'Phone'
+    header: 'Утас'
   },
 
   {
@@ -48,7 +48,7 @@ export const columns = (
         className="flex cursor-pointer items-center"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        Created At
+        Үүсгэсэн огноо
         <CaretSortIcon className="ml-2 h-4 w-4" />
       </div>
     ),
@@ -58,7 +58,7 @@ export const columns = (
 
   {
     accessorKey: 'id',
-    header: 'Actions',
+    header: 'Үйлдлүүд',
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">

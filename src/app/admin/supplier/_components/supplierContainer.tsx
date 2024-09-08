@@ -48,7 +48,7 @@ export default function SupplierContainer({
         <div className="mb-6 flex items-center justify-between">
           <Input
             type="search"
-            placeholder="Search suppliers..."
+            placeholder="Нийлүүлэгчийг хайх..."
             className="max-w-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -56,12 +56,12 @@ export default function SupplierContainer({
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button>
-                <PlusCircle className="mr-2 h-4 w-4" /> Add New Supplier
+                <PlusCircle className="mr-2 h-4 w-4" /> Шинэ нийлүүлэгч нэмэх
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add New Supplier</DialogTitle>
+                <DialogTitle>Шинэ нийлүүлэгч нэмэх</DialogTitle>
               </DialogHeader>
               <SupplierForm
                 initialData={
@@ -82,7 +82,7 @@ export default function SupplierContainer({
         <Separator />
 
         {!data ? (
-          <p>No data</p>
+          <p>Мэдээлэл байхгүй</p>
         ) : (
           <DataTable
             columns={columns(handleEditClick)}

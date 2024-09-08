@@ -15,43 +15,43 @@ export function OrderCards() {
       <Card className="sm:col-span-2" x-chunk="dashboard-05-chunk-0">
         <CardHeader className="pb-3">
           <CardTitle>
-            Total Orders <span>(25)</span>
+            Нийт Захиалууд <span>(25)</span>
           </CardTitle>
           <CardDescription className="max-w-lg text-balance leading-relaxed">
-            Total number of orders for the past 30 days
+            Өнгөрсөн 30 хоногийн хугацаанд нийт захиалга
           </CardDescription>
         </CardHeader>
         <CardFooter>
           <CreateOrderModal />
-          {/* <Button>Create New Order</Button> */}
+          {/* <Button>Шинэ захиалга үүсгэх</Button> */}
         </CardFooter>
       </Card>
       <Card x-chunk="dashboard-05-chunk-1">
         <CardHeader className="pb-2">
-          <CardDescription>Pending Orders</CardDescription>
+          <CardDescription>Хүлээгдэж буй Захиалууд</CardDescription>
           <CardTitle className="text-4xl">4</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xs text-muted-foreground">
-            +25% from last week
+            Өнгөрсөн долоо хоногоос +25%
           </div>
         </CardContent>
         <CardFooter>
-          <Progress value={25} aria-label="25% increase" />
+          <Progress value={25} aria-label="25% өсөлт" />
         </CardFooter>
       </Card>
       <Card x-chunk="dashboard-05-chunk-2">
         <CardHeader className="pb-2">
-          <CardDescription>Total Value</CardDescription>
+          <CardDescription>Нийт Үнийн Дүн</CardDescription>
           <CardTitle className="text-4xl">$5,329</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xs text-muted-foreground">
-            +10% from last month
+            Өнгөрсөн сард +10%
           </div>
         </CardContent>
         <CardFooter>
-          <Progress value={12} aria-label="12% increase" />
+          <Progress value={12} aria-label="12% өсөлт" />
         </CardFooter>
       </Card>
     </div>

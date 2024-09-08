@@ -49,12 +49,14 @@ export default function CustomerForm({
       <form onSubmit={form.handleSubmit(onSubmitForm)} className="space-y-8">
         <DialogHeader>
           <DialogTitle>
-            {initialData ? 'Edit Customer' : 'Add New Customer'}
+            {initialData
+              ? 'Харилцагчийн мэдээллийг засах'
+              : 'Шинэ харилцагч нэмэх'}
           </DialogTitle>
           <DialogDescription>
             {initialData
-              ? 'Make changes to customer information here.'
-              : 'Enter the details for the new customer.'}
+              ? 'Харилцагчийн мэдээллийг энд засна уу.'
+              : 'Шинэ харилцагчийн мэдээллийг оруулна уу.'}
           </DialogDescription>
         </DialogHeader>
         <FormField
@@ -62,9 +64,9 @@ export default function CustomerForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Нэр</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input placeholder="Жон Доу" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -75,7 +77,7 @@ export default function CustomerForm({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Имэйл</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="john@example.com" {...field} />
               </FormControl>
@@ -88,7 +90,7 @@ export default function CustomerForm({
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone</FormLabel>
+              <FormLabel>Утасны дугаар</FormLabel>
               <FormControl>
                 <Input placeholder="+1234567890" {...field} />
               </FormControl>
@@ -101,7 +103,7 @@ export default function CustomerForm({
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Address</FormLabel>
+              <FormLabel>Хаяг</FormLabel>
               <FormControl>
                 <Input placeholder="123 Main St, City, Country" {...field} />
               </FormControl>
@@ -111,7 +113,7 @@ export default function CustomerForm({
         />
         <DialogFooter>
           <Button type="submit">
-            {initialData ? 'Save Changes' : 'Add Customer'}
+            {initialData ? 'Өөрчлөлтийг хадгалах' : 'Харилцагч нэмэх'}
           </Button>
         </DialogFooter>
       </form>

@@ -16,7 +16,7 @@ export default function ProductInfoTab({
       <Card>
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-between">
-            Product Information
+            Бүтээгдэхүүний мэдээлэл
             <ProductCreateModal product={productDetails}>
               <Button variant="ghost">
                 <Icons.edit className="h-4 w-4" />
@@ -27,34 +27,34 @@ export default function ProductInfoTab({
         <CardContent>
           <dl className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <dt className="font-medium">SKU</dt>
+              <dt className="font-medium">SKU код</dt>
               <dd>{productDetails.sku}</dd>
             </div>
             <div>
-              <dt className="font-medium">Barcode</dt>
+              <dt className="font-medium">Бар код</dt>
               <dd>{productDetails.barcode}</dd>
             </div>
             <div>
-              <dt className="font-medium">Category</dt>
+              <dt className="font-medium">Ангилал</dt>
               {/* <dd>{productDetails.category.name}</dd> */}
             </div>
             <div>
-              <dt className="font-medium">Supplier</dt>
+              <dt className="font-medium">Нийлүүлэгч</dt>
               {/* <dd>{productDetails.supplier.name}</dd> */}
             </div>
             <div>
-              <dt className="font-medium">Location</dt>
-              <dd>{'Warehouse A'}</dd>
+              <dt className="font-medium">Байршил</dt>
+              <dd>{'Агуулах A'}</dd>
             </div>
             <div>
-              <dt className="font-medium">Cost Price</dt>
+              <dt className="font-medium">Өртөг</dt>
               <dd>${productDetails.costPrice.toFixed(2)}</dd>
             </div>
           </dl>
         </CardContent>
         <Card>
           <CardHeader>
-            <CardTitle>Product Description</CardTitle>
+            <CardTitle>Бүтээгдэхүүний тайлбар</CardTitle>
           </CardHeader>
           <CardContent>
             <p>{productDetails.description}</p>

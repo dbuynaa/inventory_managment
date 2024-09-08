@@ -11,23 +11,23 @@ import { toast } from '@/components/ui/use-toast';
 export const customerColumns: ColumnDef<Customer>[] = [
   {
     accessorKey: 'name',
-    header: 'Name'
+    header: 'Нэр'
   },
   {
     accessorKey: 'email',
-    header: 'Email'
+    header: 'Имэйл'
   },
   {
     accessorKey: 'phone',
-    header: 'Phone'
+    header: 'Утас'
   },
   {
     accessorKey: 'address',
-    header: 'Address'
+    header: 'Хаяг'
   },
   {
     accessorKey: 'id',
-    header: 'Actions',
+    header: 'Үйлдлүүд',
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
@@ -48,7 +48,7 @@ export const customerColumns: ColumnDef<Customer>[] = [
             formAction={async () => {
               const deleted = await customerDeleteAction(row.original.id);
               toast({
-                title: deleted?.success ? 'Success' : 'Error',
+                title: deleted?.success ? 'Амжилттай' : 'Алдаа',
                 description: deleted?.message
               });
             }}

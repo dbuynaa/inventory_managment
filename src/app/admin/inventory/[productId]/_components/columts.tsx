@@ -6,12 +6,12 @@ import { type ColumnDef } from '@tanstack/react-table';
 export const columns: ColumnDef<InventoryLog>[] = [
   {
     accessorKey: 'changedAt',
-    header: 'Date',
+    header: 'Огноо',
     accessorFn: (row) => new Date(row.changedAt).toLocaleDateString()
   },
   {
     accessorKey: 'quantityChange',
-    header: 'Change',
+    header: 'Өөрчлөлт',
     cell: ({ row }) => {
       return (
         <span
@@ -27,10 +27,10 @@ export const columns: ColumnDef<InventoryLog>[] = [
   },
   {
     accessorKey: 'changeType',
-    header: 'Type'
+    header: 'Төрөл'
   },
   {
     accessorKey: 'referenceId',
-    header: 'Reference'
+    header: 'Лавлагаа'
   }
 ];
