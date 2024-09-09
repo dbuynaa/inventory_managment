@@ -1,26 +1,30 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Modal } from '../ui/modal';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog';
 
 interface AlertModalProps {
   title?: string;
   description?: string;
-  confirmText?: string;
-  isOpen: boolean;
-  onClose: () => void;
   onConfirm: () => void;
-  loading: boolean;
+  children?: React.ReactNode;
 }
 
 export const AlertModal: React.FC<AlertModalProps> = ({
   title,
   description,
-  confirmText,
-  isOpen,
-  onClose,
   onConfirm,
-  loading
+  children
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -33,20 +37,20 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   }
 
   return (
-    <Modal
-      title={title ?? 'Are you sure?'}
-      description={description ?? 'This action cannot be undone.'}
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <div className="flex w-full items-center justify-end space-x-2 pt-6">
-        <Button disabled={loading} variant="outline" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button disabled={loading} variant="destructive" onClick={onConfirm}>
-          {confirmText ?? 'Continue'}
-        </Button>
-      </div>
-    </Modal>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title ?? 'Are you sure?'}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {description ?? 'This action cannot be undone.'}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>Continue</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };

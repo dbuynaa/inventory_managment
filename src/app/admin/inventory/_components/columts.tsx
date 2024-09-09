@@ -7,17 +7,10 @@ import { type Product } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 import InventoryAdjustForm from './inventory-adjust-form';
+import { AlertModal } from '@/components/modal/alert-modal';
+import { deleteProduct } from '@/lib/actions';
 
-// Энэ төрлийг өгөгдлийн хэлбэрийг тодорхойлоход ашиглана.
-// Хэрэв хүсвэл энд Zod схем ашиглаж болно.
-// type ProductShape = Pick<
-//   Product,
-//   'id' | 'name' | 'price' | 'costPrice' | 'quantityOnStock' | 'createdAt'
-// >;
-
-export const columns = (
-  handleDeleteClick: ({ id }: { id: string }) => void
-): ColumnDef<Product>[] => [
+export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: 'name',
     header: 'Нэр'
@@ -61,13 +54,11 @@ export const columns = (
             </InventoryAdjustForm>
             {/* <Icons.adjust className="h-5 w-5" /> */}
           </Button>
-          <Button
-            onClick={() => handleDeleteClick({ id: row.original.id })}
-            variant="ghost"
-            size={'sm'}
-          >
-            <Icons.delete className="h-5 w-5" />
-          </Button>
+          <AlertModal onConfirm={() => deleteProduct(row.original.id)}>
+            <Button variant="ghost" size={'sm'}>
+              <Icons.delete className="h-5 w-5" />
+            </Button>
+          </AlertModal>
         </>
       );
     }

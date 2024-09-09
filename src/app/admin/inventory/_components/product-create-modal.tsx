@@ -1,3 +1,5 @@
+'use client';
+
 import { type Product } from '@prisma/client';
 import {
   Dialog,

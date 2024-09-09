@@ -23,7 +23,8 @@ export default async function InventoryLogsPage({ searchParams }: paramsProps) {
     <InventoryLogsContainer
       inventoryLogs={data ?? []}
       total={total}
-      searchParams={searchParams}
+      page={page}
+      limit={pageLimit}
     />
   );
 }

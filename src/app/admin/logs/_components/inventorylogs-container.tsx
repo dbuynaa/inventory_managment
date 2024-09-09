@@ -27,14 +27,14 @@ type InventoryLogShape = InventoryLog & {
 export function InventoryLogsContainer({
   inventoryLogs,
   total,
-  searchParams
+  page,
+  limit
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  page: number;
+  limit: number;
   inventoryLogs: InventoryLogShape[];
   total: number;
 }) {
-  const page = Number(searchParams.page) || 1;
-  const pageLimit = Number(searchParams.limit) || 10;
   const [searchTerm, setSearchTerm] = useState('');
   const [changeTypeFilter, setChangeTypeFilter] = useState('');
 
@@ -73,7 +73,7 @@ export function InventoryLogsContainer({
             total={total}
             columns={columns}
             page={page}
-            limit={pageLimit}
+            limit={limit}
           />
         </CardContent>
       </Card>
