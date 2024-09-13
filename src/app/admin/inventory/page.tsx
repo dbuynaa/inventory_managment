@@ -2,8 +2,7 @@ import { type Metadata } from 'next';
 import InventoryContainer from './_components/inventory-container';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Separator } from '@/components/ui/separator';
-import InventoryHeader from './_components/inventory-header';
+
 import { PageContainer } from '@/components/layout';
 
 interface paramsProps {
@@ -19,9 +18,6 @@ export default function InventoryPage({ searchParams }: paramsProps) {
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
-        <InventoryHeader />
-        <Separator />
-
         <Suspense fallback={<InventoryDataTableLoading />}>
           <InventoryContainer searchParams={searchParams} />
         </Suspense>

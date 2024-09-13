@@ -40,12 +40,12 @@ export const inventoryRouter = createTRPCRouter({
           message: 'Product not found'
         });
 
-      if (check.quantityOnStock! < Math.abs(input.quantityAdjusted)) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Insufficient stock'
-        });
-      }
+      // if (check.quantityOnStock! < Math.abs(input.quantityAdjusted)) {
+      //   throw new TRPCError({
+      //     code: 'BAD_REQUEST',
+      //     message: 'Insufficient stock'
+      //   });
+      // }
 
       const changeType = input.quantityAdjusted > 0 ? 'INCREASED' : 'DECREASED';
 
@@ -67,7 +67,8 @@ export const inventoryRouter = createTRPCRouter({
         data: {
           reason: input.reason,
           quantityAdjusted: input.quantityAdjusted,
-          adjustmentType: input.quantityAdjusted > 0 ? 'INCREASE' : 'DECREASE',
+          adjustmentType: input.adjustmentType,
+          // adjustmentType: input.quantityAdjusted > 0 ? 'INCREASE' : 'DECREASE',
           inventoryLog: { connect: { id: logs.id } },
           product: { connect: { id: input.productId } },
           adjustedBy: { connect: { id: ctx.session.user.id } }

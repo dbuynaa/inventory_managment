@@ -1,50 +1,81 @@
-// hooks/useSearch.ts
+'use client';
+
 import { useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export function useSearch() {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
+  // Get a new searchParams string by merging the current
+  // searchParams with a provided key/value pair
   const createQueryString = useCallback(
-    (name: string, value: string | null) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value === null || value === '') {
-        params.delete(name);
+    (name?: string, value?: string) => {
+      const params = new URLSearchParams(searchParams);
+      if (name) {
+        if (value) {
+          params.set(name, value);
+        } else {
+          params.delete(name);
+        }
       } else {
-        params.set(name, value);
+        for (const key of params.keys()) {
+          params.delete(key);
+        }
       }
       return params.toString();
     },
     [searchParams]
   );
 
-  const setParam = useCallback(
-    (name: string, value: string | null) => {
-      const queryString = createQueryString(name, value);
-      router.push(queryString ? `?${queryString}` : window.location.pathname);
+  const useSearch = useCallback(
+    (name?: string, value?: string) => {
+      router.push(`${pathname}?${createQueryString(name, value)}`);
     },
-    [router, createQueryString]
+    [createQueryString, pathname, router]
   );
 
-  const getParam = useCallback(
-    (name: string) => {
-      return searchParams.get(name);
+  return useSearch;
+}
+
+export function useSearchArray() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const params = new URLSearchParams(searchParams);
+
+  // Get a new searchParams string by merging the current
+  // searchParams with a provided key/value pair
+  const createQueryString = useCallback(
+    (props: object | null) => {
+      if (!props)
+        for (const key of params.keys()) {
+          params.delete(key);
+        }
+      else
+        for (const [name, value] of Object.entries(props)) {
+          if (name) {
+            if (value) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+              params.set(name, value);
+            } else {
+              params.delete(name);
+            }
+          }
+        }
+
+      return params.toString();
     },
     [searchParams]
   );
 
-  const removeParam = useCallback(
-    (name: string) => {
-      setParam(name, null);
+  const useSearchArray = useCallback(
+    (props: object) => {
+      router.push(`${pathname}?${createQueryString(props)}`);
     },
-    [setParam]
+    [createQueryString, pathname, router]
   );
-
-  return {
-    setParam,
-    getParam,
-    removeParam,
-    createQueryString
-  };
+  return useSearchArray;
 }

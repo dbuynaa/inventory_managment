@@ -134,16 +134,23 @@ export async function adjustmentCreateAction(
 ) {
   try {
     await api.inventory.productAdjustment(data);
-    revalidatePath('/supplier');
+    revalidatePath('/inventory');
+
     return {
       message: `Adjustemnt created successfully.`,
       success: true
     };
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
+    if (error instanceof TRPCError) {
+      return {
+        message: error.message,
+        success: false
+      };
+    }
     return {
-      message: `Adjustemnt created successfully.`,
-      success: true
+      message: 'Database Error: Failed to create adjustment.',
+      success: false
     };
   }
 }

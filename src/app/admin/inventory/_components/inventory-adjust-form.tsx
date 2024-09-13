@@ -26,6 +26,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { adjustmentCreateAction } from '@/lib/actions';
 import { adjustmentCreateInput } from '@/server/api/types';
+import { api } from '@/trpc/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AdjustmentType, type Product } from '@prisma/client';
 import { DialogTrigger } from '@radix-ui/react-dialog';
@@ -45,11 +46,12 @@ export default function InventoryAdjustForm({
   const [open, onOpenChange] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
+  const utils = api.useUtils();
   const form = useForm<AdjustmentFormData>({
     resolver: zodResolver(adjustmentCreateInput),
     defaultValues: {
       productId: product.id,
-      // adjustmentType: 'ADJUSTED',
+      adjustmentType: 'INCREASE',
       quantityAdjusted: 0,
       reason: ''
     }
@@ -59,6 +61,7 @@ export default function InventoryAdjustForm({
     setIsPending(true);
     const { success, message } = await adjustmentCreateAction(data);
     if (success) {
+      await utils.product.invalidate();
       toast({
         title: 'Success',
         description: message

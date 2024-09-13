@@ -30,6 +30,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { useState } from 'react';
+import { Skeleton } from '../ui/skeleton';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -37,6 +38,7 @@ interface DataTableProps<TData, TValue> {
   page: number;
   limit: number;
   total: number;
+  isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -44,6 +46,7 @@ export function DataTable<TData, TValue>({
   data,
   page = 1,
   limit = 5,
+  isLoading = false,
   total
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -60,21 +63,21 @@ export function DataTable<TData, TValue>({
       sorting
     }
   });
-  const { setParam } = useSearch();
+  const onSearch = useSearch();
 
   function prevPage() {
     if (page > 1) {
-      setParam('page', `${page - 1}`);
+      onSearch('page', `${page - 1}`);
     }
   }
   function nextPage() {
     const maxPage = Math.ceil(total / limit);
     if (page < maxPage) {
-      setParam('page', `${page + 1}`);
+      onSearch('page', `${page + 1}`);
     }
   }
   function handleLimitChange(newLimit: string) {
-    setParam('limit', newLimit);
+    onSearch('limit', newLimit);
   }
   return (
     <Card className="rounded-md border">
@@ -99,7 +102,18 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-fit space-y-4 text-center"
+                >
+                  <Skeleton className="h-8 w-4/5" />
+                  <Skeleton className="h-8 w-3/5" />
+                  <Skeleton className="h-8 w-2/5" />
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

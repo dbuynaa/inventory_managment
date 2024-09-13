@@ -7,30 +7,22 @@ import { Package } from 'lucide-react';
 import ProductCreateModal from './product-create-modal';
 import { useEffect, useState } from 'react';
 import { useSearch } from '@/hooks/useSearch';
+import useDebounce from '@/hooks/useDebounce';
+import { useSearchParams } from 'next/navigation';
 
 export default function InventoryHeader() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const { setParam } = useSearch();
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get('search') ?? ''
+  );
+  // const { setParam } = useSearch();
+  const onSearch = useSearch();
+  const debouncedSearchTerm = useDebounce(searchTerm || '', 500);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const debounce = (fn: (...args: any[]) => void, delay: number) => {
-    let timeoutId: NodeJS.Timeout;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (...args: any[]) => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      timeoutId = setTimeout(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        fn(...args);
-      }, delay);
-    };
-  };
   useEffect(() => {
-    debounce(() => {
-      setParam('search', searchTerm);
-    }, 300);
-  }, [searchTerm, setParam]);
+    onSearch('search', debouncedSearchTerm);
+  }, [debouncedSearchTerm, onSearch]);
+
   return (
     <div className="flex items-start justify-between">
       <Heading
