@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
 
 // import { GeistSans } from 'geist/font/sans';
-import { Roboto } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 import { type Metadata } from 'next';
 import { Toaster } from '@/components/ui/toaster';
 import NextTopLoader from 'nextjs-toploader';
@@ -18,10 +18,8 @@ export const metadata: Metadata = {
   icons: [{ rel: 'icon', url: '/favicon.ico' }]
 };
 
-const inter = Roboto({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['300', '400', '500', '700']
+const inter = Manrope({
+  subsets: ['latin']
 });
 
 export default async function RootLayout({
@@ -34,7 +32,7 @@ export default async function RootLayout({
       <body>
         <TRPCReactProvider>
           <Providers session={session}>
-            <NextTopLoader showSpinner={false} />
+            <NextTopLoader color="hsl(var(--primary))" showSpinner={false} />
             <Toaster />
             {children}
             <Analytics />

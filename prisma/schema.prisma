@@ -52,11 +52,12 @@ enum OrderStatus {
 }
 
 model Product {
-    id          String  @id @default(uuid())
+    id          String        @id @default(uuid())
     name        String
     description String
-    sku         String  @unique
-    barcode     String? @unique
+    sku         String        @unique
+    barcode     String?       @unique
+    status      ProductStatus @default(ACTIVE)
 
     productImages String?
 
@@ -81,6 +82,12 @@ model Product {
     address              Address?              @relation(fields: [addressId], references: [id])
     addressId            String?
     inventoryLog         InventoryLog[]
+}
+
+enum ProductStatus {
+    ACTIVE
+    INACTIVE
+    DELETED
 }
 
 model Category {

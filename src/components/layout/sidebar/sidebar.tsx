@@ -26,20 +26,25 @@ export function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      <div className="hidden p-5 pt-10 lg:block">
-        <Link href={'/'}>
+      <div className="p-5 pt-10">
+        <Link className="flex items-center overflow-hidden" href={'/'}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mr-2 h-6 w-6"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            className="lucide lucide-circle h-6 w-6 flex-none text-orange-500"
           >
-            <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
+            <circle cx="12" cy="12" r="10"></circle>
           </svg>
+          <span className="ml-2 text-xl font-normal text-secondary-foreground">
+            AGUULAH
+          </span>
         </Link>
       </div>
       <ChevronLeft

@@ -7,6 +7,7 @@ export const loginSchema = z.object({
 
 export const productCreateInput = z.object({
   id: z.string().optional(),
+  image: z.string().optional(),
   name: z
     .string()
     .min(3, { message: 'Product Name must be at least 3 characters' }),

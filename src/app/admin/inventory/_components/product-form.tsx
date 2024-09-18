@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,6 +27,9 @@ import { FormInput } from '@/components/form/form-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { createProductOrUpdateAction } from '@/lib/actions';
 import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import Image from 'next/image';
+import { X } from 'lucide-react';
 
 type ProductFormValues = z.infer<typeof productCreateInput>;
 
@@ -39,9 +43,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   onComplete
 }) => {
   const [isPending, setIsPending] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
   const action = initialData ? 'Өөрчлөлтийг хадгалах' : 'Бүтээгдэхүүн нэмэх';
-
+  const utils = api.useUtils();
   const { data: suppliers } = api.supplier.getMany.useQuery({
     limit: 100,
     page: 1
@@ -71,6 +76,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       id: initialData?.id
     });
     if (success) {
+      await utils.product.invalidate();
       toast({
         title: 'Амжилттай',
         description: message
@@ -87,6 +93,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     setIsPending(false);
   };
 
+  const handleRemoveImage = () => {
+    form.reset();
+    if (previewImage) {
+      URL.revokeObjectURL(previewImage);
+    }
+    setPreviewImage(null);
+  };
+
   return (
     <ScrollArea>
       <Form {...form}>
@@ -95,6 +109,55 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           className="w-full space-y-8"
         >
           <div className="gap-8 md:grid md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field: { onChange, value, ...rest } }) => (
+                <FormItem>
+                  <FormLabel>Product Image</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          onChange(e.target.files);
+                          setPreviewImage(URL.createObjectURL(file));
+                        }
+                      }}
+                      {...rest}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Upload an image of the product. Max file size: 5MB. Accepted
+                    formats: .jpg, .jpeg, .png, .webp
+                  </FormDescription>
+                  <FormMessage />
+                  {previewImage && (
+                    <div className="relative">
+                      <Image
+                        src={previewImage}
+                        alt="Preview"
+                        width={200}
+                        height={200}
+                        objectFit="cover"
+                        className="rounded-md"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute right-0 top-0 -mr-2 -mt-2"
+                        onClick={handleRemoveImage}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </FormItem>
+              )}
+            />
             <FormInput
               form={form}
               label="Нэр"

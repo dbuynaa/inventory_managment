@@ -9,6 +9,7 @@ import Link from 'next/link';
 import InventoryAdjustForm from './inventory-adjust-form';
 import { AlertModal } from '@/components/modal/alert-modal';
 import { deleteProduct } from '@/lib/actions';
+import { toast } from '@/components/ui/use-toast';
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -54,7 +55,22 @@ export const columns: ColumnDef<Product>[] = [
             </InventoryAdjustForm>
             {/* <Icons.adjust className="h-5 w-5" /> */}
           </Button>
-          <AlertModal onConfirm={() => deleteProduct(row.original.id)}>
+          <AlertModal
+            onConfirm={async () => {
+              const res = await deleteProduct(row.original.id);
+              if (res.success) {
+                toast({
+                  title: 'Амжилттай',
+                  description: res.message
+                });
+              } else {
+                toast({
+                  title: 'Алдаа гарлаа',
+                  description: res.message
+                });
+              }
+            }}
+          >
             <Button variant="ghost" size={'sm'}>
               <Icons.delete className="h-5 w-5" />
             </Button>

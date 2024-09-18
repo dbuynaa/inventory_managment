@@ -46,7 +46,6 @@ export default function InventoryAdjustForm({
   const [open, onOpenChange] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
-  const utils = api.useUtils();
   const form = useForm<AdjustmentFormData>({
     resolver: zodResolver(adjustmentCreateInput),
     defaultValues: {
@@ -61,7 +60,6 @@ export default function InventoryAdjustForm({
     setIsPending(true);
     const { success, message } = await adjustmentCreateAction(data);
     if (success) {
-      await utils.product.invalidate();
       toast({
         title: 'Success',
         description: message

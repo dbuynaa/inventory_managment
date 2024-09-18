@@ -65,7 +65,8 @@ export const productRouter = createTRPCRouter({
       return await ctx.db.product.update({
         where: { id: input.id },
         data: {
-          name: 'Deleted'
+          status: 'DELETED',
+          updatedAt: new Date()
         }
       });
     }),
@@ -83,6 +84,7 @@ export const productRouter = createTRPCRouter({
       const products = await ctx.db.product.findMany({
         where: {
           supplierId: input.supplierId,
+          status: { not: 'DELETED' },
           name: { contains: input.search }
         },
         orderBy: { createdAt: 'desc' },

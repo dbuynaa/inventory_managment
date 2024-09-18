@@ -9,6 +9,7 @@ import {
   type salesCreateInput
 } from '@/server/api/types';
 import { api } from '@/trpc/server';
+
 import { TRPCError } from '@trpc/server';
 import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
@@ -85,7 +86,12 @@ export async function deleteProduct(id: string | undefined) {
   }
   try {
     await api.product.delete({ id: id });
-    revalidatePath('/inventory');
+
+    revalidatePath('/admin/inventory');
+    return {
+      message: 'Product deleted successfully.',
+      success: true
+    };
   } catch (error) {
     if (error instanceof TRPCError) {
       return {
@@ -109,7 +115,7 @@ export async function createProductOrUpdateAction(
     } else {
       await api.product.create(data);
     }
-    revalidatePath('/inventory');
+    revalidatePath('/admin/inventory');
     return {
       message: `Product created successfully.`,
       success: true
@@ -134,8 +140,9 @@ export async function adjustmentCreateAction(
 ) {
   try {
     await api.inventory.productAdjustment(data);
-    revalidatePath('/inventory');
+    const path = `/admin/inventory`;
 
+    revalidatePath(path);
     return {
       message: `Adjustemnt created successfully.`,
       success: true

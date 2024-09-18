@@ -13,11 +13,16 @@ export default function InventoryContainer({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 5;
 
-  const { data, isLoading } = api.product.getMany.useQuery({
-    search: searchParams.search as string,
-    limit: pageLimit,
-    page: page
-  });
+  const { data, isLoading } = api.product.getMany.useQuery(
+    {
+      search: searchParams.search as string,
+      limit: pageLimit,
+      page: page
+    },
+    {
+      trpc: { ssr: false }
+    }
+  );
 
   return (
     <>
