@@ -112,6 +112,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             <FormField
               control={form.control}
               name="image"
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               render={({ field: { onChange, value, ...rest } }) => (
                 <FormItem>
                   <FormLabel>Product Image</FormLabel>
