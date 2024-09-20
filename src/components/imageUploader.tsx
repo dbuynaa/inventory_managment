@@ -1,37 +1,20 @@
-'use client';
-import React, { useCallback, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { z } from 'zod';
+import { ImagePlus, X } from 'lucide-react';
 import { Input } from './ui/input';
-import {
-  // Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from './ui/form';
-import { ImagePlus } from 'lucide-react';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
 
-export const ImageUploader: React.FC = () => {
-  const [preview, setPreview] = useState<string | ArrayBuffer | null>('');
+interface ImageUploaderProps {
+  onUpload: (file: File) => void;
+  disabled: boolean;
+}
 
-  const formSchema = z.object({
-    image: z
-      //Rest of validations done via react dropzone
-      .instanceof(File)
-      .refine((file) => file.size !== 0, 'Please upload an image')
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    mode: 'onBlur',
-    defaultValues: {
-      image: new File([''], 'filename')
-    }
-  });
+export const ImageUploader: React.FC<ImageUploaderProps> = ({
+  onUpload,
+  disabled
+}) => {
+  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -39,15 +22,13 @@ export const ImageUploader: React.FC = () => {
       try {
         reader.onload = () => setPreview(reader.result);
         reader.readAsDataURL(acceptedFiles[0]!);
-        form.setValue('image', acceptedFiles[0]!);
-        form.clearErrors('image');
+        onUpload(acceptedFiles[0]!);
       } catch (error) {
         console.log(error);
         setPreview(null);
-        form.resetField('image');
       }
     },
-    [form]
+    [onUpload]
   );
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } =
@@ -55,67 +36,46 @@ export const ImageUploader: React.FC = () => {
       onDrop,
       maxFiles: 1,
       maxSize: 1000000,
-      accept: { 'image/png': [], 'image/jpg': [], 'image/jpeg': [] }
+      accept: { 'image/png': [], 'image/jpg': [], 'image/jpeg': [] },
+      disabled
     });
 
-  // const onSubmit = (values: z.infer<typeof formSchema>) => {
-  //   console.log(values);
-  //   toast({
-  //     title: 'Image uploaded',
-  //     description: `Image uploaded successfully 🎉 ${values.image.name}`
-  //   });
-  // };
+  const removeImage = useCallback(() => {
+    setPreview(null);
+  }, [setPreview]);
 
   return (
-    <FormField
-      control={form.control}
-      name="image"
-      render={() => (
-        <FormItem className="mx-auto md:w-1/2">
-          <FormLabel
-            className={`${fileRejections.length !== 0 && 'text-destructive'}`}
+    <Card
+      {...getRootProps()}
+      className="relative flex h-80 w-full min-w-[200px] cursor-pointer flex-col items-center justify-center"
+    >
+      {preview && (
+        <>
+          <img
+            src={preview as string}
+            alt="Uploaded image"
+            className="h-full w-full rounded-lg object-cover object-center"
+          />
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              removeImage();
+            }}
+            className="absolute right-2 top-2 p-2"
+            variant="destructive"
           >
-            <h2 className="text-xl font-semibold tracking-tight">
-              Upload your image
-              <span
-                className={
-                  form.formState.errors.image || fileRejections.length !== 0
-                    ? 'text-destructive'
-                    : 'text-muted-foreground'
-                }
-              ></span>
-            </h2>
-          </FormLabel>
-          <FormControl>
-            <div
-              {...getRootProps()}
-              className="mx-auto flex cursor-pointer flex-col items-center justify-center gap-y-2 rounded-lg border border-foreground p-8 shadow-sm shadow-foreground"
-            >
-              {preview && (
-                <img
-                  src={preview as string}
-                  alt="Uploaded image"
-                  className="max-h-[400px] rounded-lg"
-                />
-              )}
-              <ImagePlus
-                className={`size-40 ${preview ? 'hidden' : 'block'}`}
-              />
-              <Input {...getInputProps()} type="file" />
-              {isDragActive ? (
-                <p>Drop the image!</p>
-              ) : (
-                <p>Click here or drag an image to upload it</p>
-              )}
-            </div>
-          </FormControl>
-          <FormMessage>
-            {fileRejections.length !== 0 && (
-              <p>Image must be less than 1MB and of type png, jpg, or jpeg</p>
-            )}
-          </FormMessage>
-        </FormItem>
+            <X className="size-4" />
+          </Button>
+        </>
       )}
-    />
+      <ImagePlus
+        className={`size-24 text-muted-foreground ${preview ? 'hidden' : 'block'}`}
+      />
+      <Input {...getInputProps()} type="file" disabled={disabled} />
+      {isDragActive && <p>Drop the image!</p>}
+      {fileRejections.length !== 0 && (
+        <p>Image must be less than 1MB and of type png, jpg, or jpeg</p>
+      )}
+    </Card>
   );
 };

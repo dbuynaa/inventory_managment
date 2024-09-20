@@ -4,12 +4,15 @@ import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { productCreateInput } from '../types';
 import { TRPCError } from '@trpc/server';
 import { generateSKU } from '@/lib/utils';
+import path from 'path';
+import { mkdir, writeFile } from 'fs/promises';
 
 export const productRouter = createTRPCRouter({
   create: protectedProcedure
     .input(productCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { categoryId, supplierId, ..._input } = input;
+      const { categoryId, supplierId, image, ..._input } = input;
+      let imagePath: string | undefined = '';
 
       const checkCategory = await ctx.db.category.findUnique({
         where: { id: categoryId }
@@ -33,10 +36,36 @@ export const productRouter = createTRPCRouter({
         });
       }
 
+      if (image) {
+        try {
+          const bytes = await image.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+
+          // Define the path where the file will be saved
+          const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+          const fileName = `${Date.now()}-${image.name}`;
+          const filePath = path.join(uploadDir, fileName);
+
+          // Create the directory if it doesn't exist
+          await mkdir(uploadDir, { recursive: true });
+
+          // Write the file to the server
+          await writeFile(filePath, buffer);
+          imagePath = filePath;
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to upload image'
+          });
+        }
+      }
+
       const sku = generateSKU(checkCategory.name, checkSupplier.name);
       return await ctx.db.product.create({
         data: {
           ..._input,
+          productImages: imagePath ?? undefined,
           sku: sku,
           supplier: { connect: { id: checkSupplier.id } },
           category: { connect: { id: checkCategory.id } },
