@@ -27,6 +27,7 @@ import { createProductOrUpdateAction } from '@/lib/actions';
 import { useState } from 'react';
 import { ImageUploader } from '@/components/imageUploader';
 import { productCreateInput } from '@/server/api/types';
+// import { Part, list } from '@vercel/blob';
 
 type ProductFormValues = z.infer<typeof productCreateInput>;
 
@@ -102,7 +103,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             render={({ field }) => (
               <FormItem className="col-span-2 space-y-2 sm:row-span-4 md:col-span-1">
                 <FormLabel>Бүтээгдэхүүний зураг</FormLabel>
-                <ImageUploader onUpload={field.onChange} disabled={isPending} />
+                <ImageUploader
+                  initialPreview={initialData?.productImages}
+                  onUpload={field.onChange}
+                  disabled={isPending}
+                />
                 <FormDescription>
                   Бүтээгдэхүүний зургийг байршуулна уу.
                   <br /> Файлын дээд хэмжээ: 5MB. Зөвшөөрөгдсөн формат: .jpg,
@@ -122,6 +127,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               placeholder: 'Бүтээгдэхүүний нэр'
             }}
           />
+
           <FormInput
             form={form}
             label="Тайлбар"

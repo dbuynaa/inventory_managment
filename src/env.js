@@ -17,6 +17,7 @@ export const env = createEnv({
       process.env.NODE_ENV === 'production'
         ? z.string()
         : z.string().optional(),
+    BLOB_READ_WRITE_TOKEN: z.string(),
     NEXTAUTH_URL: z.preprocess(
       // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
       // Since NextAuth.js automatically uses the VERCEL_URL if present.
@@ -40,6 +41,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
     DATABASE_URL: process.env.DATABASE_URL,
     DATABASE_URL_NON_POOLING: process.env.DATABASE_URL_NON_POOLING,
     DATABASE_PRISMA_URL: process.env.DATABASE_PRISMA_URL,

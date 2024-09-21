@@ -7,14 +7,18 @@ import { Card } from './ui/card';
 
 interface ImageUploaderProps {
   onUpload: (file: File) => void;
+  initialPreview?: string | null;
   disabled: boolean;
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
   onUpload,
+  initialPreview,
   disabled
 }) => {
-  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+  const [preview, setPreview] = useState<string | ArrayBuffer | null>(
+    initialPreview ?? null
+  );
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -47,7 +51,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   return (
     <Card
       {...getRootProps()}
-      className="relative flex h-80 w-full min-w-[200px] cursor-pointer flex-col items-center justify-center"
+      className="relative flex h-[300px] w-full min-w-[200px] cursor-pointer flex-col items-center justify-center"
     >
       {preview && (
         <>

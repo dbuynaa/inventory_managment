@@ -25,7 +25,7 @@ export default function ProductCreateModal({
     <Dialog modal open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="md:max-w-3xl">
+      <DialogContent className="md:max-w-5xl">
         <DialogHeader>
           <DialogTitle>Бүтээгдэхүүн үүсгэх</DialogTitle>
           <DialogDescription>Шинэ бүтээгдэхүүн үүсгэх</DialogDescription>

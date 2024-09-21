@@ -39,8 +39,12 @@ export default function InventoryDetailsPage({
           /> */}
 
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            {/* <img
               src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+              alt={productDetails.name}
+            /> */}
+            <img
+              src={productDetails.productImages ?? ''}
               alt={productDetails.name}
             />
           </div>

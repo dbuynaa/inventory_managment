@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Package } from 'lucide-react';
-import ProductCreateModal from './product-create-modal';
+// import ProductCreateModal from './product-create-modal';
 import { useEffect, useState } from 'react';
 import { useSearch } from '@/hooks/useSearch';
 import useDebounce from '@/hooks/useDebounce';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function InventoryHeader() {
   const searchParams = useSearchParams();
@@ -37,11 +38,16 @@ export default function InventoryHeader() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <ProductCreateModal product={null}>
+        <Link href="/admin/inventory/new">
+          <Button>
+            <Package className="mr-2 h-4 w-4" /> Бүтээгдэхүүн нэмэх
+          </Button>
+        </Link>
+        {/* <ProductCreateModal product={null}>
           <Button variant="default">
             <Package className="mr-2 h-4 w-4" /> Шинэ Бүтээгдэхүүн
           </Button>
-        </ProductCreateModal>
+        </ProductCreateModal> */}
       </div>
     </div>
   );
