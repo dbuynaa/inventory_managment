@@ -3,13 +3,20 @@
 import { Icons } from '@/components/icons';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { type Product } from '@prisma/client';
+import { ProductStatus, type Product } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 import InventoryAdjustForm from './inventory-adjust-form';
 import { AlertModal } from '@/components/modal/alert-modal';
-import { deleteProduct } from '@/lib/actions';
+import { deleteProduct, productStatusAction } from '@/lib/actions';
 import { toast } from '@/components/ui/use-toast';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -32,6 +39,38 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: 'createdAt',
     header: 'Үүсгэсэн огноо',
     accessorFn: (row) => new Date(row.createdAt).toLocaleDateString()
+  },
+  {
+    accessorKey: 'status',
+    header: 'Төлөв',
+    cell: ({ row }) => {
+      return (
+        <Select
+          value={row.original.status}
+          onValueChange={async (value) => {
+            const updated = await productStatusAction(
+              row.original.id,
+              value as ProductStatus
+            );
+            toast({
+              title: updated?.success ? 'Амжилттай' : 'Алдаа',
+              description: updated?.message
+            });
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.values(ProductStatus).map((status) => (
+              <SelectItem key={status} value={status}>
+                {status}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      );
+    }
   },
   {
     accessorKey: 'id',

@@ -3,11 +3,23 @@
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
-import { salesDeleteAction } from '@/lib/actions';
-import { type SalesDetail, type Customer, type Sale } from '@prisma/client';
+import { salesDeleteAction, salesStatusAction } from '@/lib/actions';
+import {
+  type SalesDetail,
+  type Customer,
+  type Sale,
+  SalesStatus
+} from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { FileText } from 'lucide-react';
 import SalesCreateModal from './sales-create-modal';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 type SalesShape = Sale & {
   customer: Customer;
@@ -17,7 +29,7 @@ export const salesColumns: ColumnDef<SalesShape>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
-    accessorFn: (row) => row.id.slice(0, 6) // ID-г 6 оронтой хэсэг хүртэл харагдуулах
+    cell: ({ row }) => row.original.id.slice(0, 6)
   },
   {
     accessorKey: 'saleDate',
@@ -28,10 +40,7 @@ export const salesColumns: ColumnDef<SalesShape>[] = [
   },
   {
     accessorKey: 'customer.name',
-    header: 'Харилцагч',
-    cell: ({ getValue }) => {
-      return new Date(getValue<Date>()).toLocaleDateString(); // Огноо биш, харилцагчийн нэр байх ёстой
-    }
+    header: 'Харилцагч'
   },
   {
     accessorKey: 'totalAmount',
@@ -46,7 +55,35 @@ export const salesColumns: ColumnDef<SalesShape>[] = [
   },
   {
     accessorKey: 'status',
-    header: 'Байдал'
+    header: 'Байдал',
+    cell: ({ row }) => {
+      return (
+        <Select
+          value={row.original.status}
+          onValueChange={async (value) => {
+            const updated = await salesStatusAction(
+              row.original.id,
+              value as SalesStatus
+            );
+            toast({
+              title: updated?.success ? 'Амжилттай' : 'Алдаа',
+              description: updated?.message
+            });
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={SalesStatus.PENDING}>Хүлээгдэж буи</SelectItem>
+            <SelectItem value={SalesStatus.PROCESSING}>
+              Хүргэгдэж буи
+            </SelectItem>
+            <SelectItem value={SalesStatus.SHIPPED}>Хүргэсэн</SelectItem>
+          </SelectContent>
+        </Select>
+      );
+    }
   },
   {
     accessorKey: 'id',

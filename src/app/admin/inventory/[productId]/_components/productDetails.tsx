@@ -13,6 +13,7 @@ import { type Product } from '@prisma/client';
 import InventoryLogsTab from './inventory-logs-tab';
 import ProductInfoTab from './product-info-tab';
 import InventoryAdjustForm from '../../_components/inventory-adjust-form';
+import Image from 'next/image';
 
 export default function InventoryDetailsPage({
   product: productDetails,
@@ -30,22 +31,12 @@ export default function InventoryDetailsPage({
 
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="flex items-start justify-center md:items-center">
-            {/* <Image
-            src="https://via.placeholder.com/300"
-            alt={productDetails.name}
-            width={300}
-            height={300}
-            className="rounded-lg shadow-md"
-          /> */}
-
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            {/* <img
-              src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-              alt={productDetails.name}
-            /> */}
-            <img
+            <Image
               src={productDetails.productImages ?? ''}
               alt={productDetails.name}
+              width={300}
+              height={300}
+              className="rounded-lg shadow-md"
             />
           </div>
           <div className="grid grid-cols-1 gap-4">

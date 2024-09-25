@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { salesCreateInput } from '../types';
 import { TRPCError } from '@trpc/server';
+import { SalesStatus } from '@prisma/client';
 
 export const salesRouter = createTRPCRouter({
   create: protectedProcedure
@@ -96,7 +97,14 @@ export const salesRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return await ctx.db.sale.delete({ where: { id: input.id } });
     }),
-
+  status: protectedProcedure
+    .input(z.object({ id: z.string(), status: z.nativeEnum(SalesStatus) }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.sale.update({
+        where: { id: input.id },
+        data: { status: input.status }
+      });
+    }),
   getMany: protectedProcedure
     .input(z.object({ limit: z.number(), page: z.number() }))
     .query(async ({ ctx, input }) => {

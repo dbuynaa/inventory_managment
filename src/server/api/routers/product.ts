@@ -7,6 +7,7 @@ import { generateSKU } from '@/lib/utils';
 // import path from 'path';
 // import { mkdir, writeFile } from 'fs/promises';
 import { put } from '@vercel/blob';
+import { ProductStatus } from '@prisma/client';
 
 export const productRouter = createTRPCRouter({
   create: protectedProcedure
@@ -89,6 +90,14 @@ export const productRouter = createTRPCRouter({
           status: 'DELETED',
           updatedAt: new Date()
         }
+      });
+    }),
+  status: protectedProcedure
+    .input(z.object({ id: z.string(), status: z.nativeEnum(ProductStatus) }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.product.update({
+        where: { id: input.id },
+        data: { status: input.status }
       });
     }),
 

@@ -9,6 +9,7 @@ import {
   type salesCreateInput
 } from '@/server/api/types';
 import { api } from '@/trpc/server';
+import { ProductStatus, SalesStatus } from '@prisma/client';
 
 import { TRPCError } from '@trpc/server';
 import { AuthError } from 'next-auth';
@@ -105,7 +106,33 @@ export async function deleteProduct(id: string | undefined) {
     };
   }
 }
-
+export async function productStatusAction(
+  id: string | undefined,
+  status: ProductStatus
+) {
+  if (!id) {
+    throw new Error('Sales not found.');
+  }
+  try {
+    await api.product.status({ id: id, status: status });
+    revalidatePath('/sales');
+    return {
+      message: `Status амжилттай солигдлоо.`,
+      success: true
+    };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      return {
+        message: error.message,
+        success: false
+      };
+    }
+    return {
+      message: 'Failed to delete sales.',
+      success: false
+    };
+  }
+}
 export async function createProductOrUpdateAction(
   data: z.infer<typeof productCreateInput>
 ) {
@@ -247,6 +274,38 @@ export async function salesDeleteAction(id: string | undefined) {
   try {
     await api.sales.delete({ id: id });
     revalidatePath('/sales');
+    return {
+      message: `Sales deleted successfully.`,
+      success: true
+    };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      return {
+        message: error.message,
+        success: false
+      };
+    }
+    return {
+      message: 'Failed to delete sales.',
+      success: false
+    };
+  }
+}
+
+export async function salesStatusAction(
+  id: string | undefined,
+  status: SalesStatus
+) {
+  if (!id) {
+    throw new Error('Sales not found.');
+  }
+  try {
+    await api.sales.status({ id: id, status: status });
+    revalidatePath('/sales');
+    return {
+      message: `Status амжилттай солигдлоо.`,
+      success: true
+    };
   } catch (error) {
     if (error instanceof TRPCError) {
       return {

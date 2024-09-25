@@ -1,10 +1,10 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ProductCreateModal from '../../_components/product-create-modal';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { type Product } from '@prisma/client';
+import Link from 'next/link';
 
 export default function ProductInfoTab({
   productDetails
@@ -17,11 +17,16 @@ export default function ProductInfoTab({
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-between">
             Бүтээгдэхүүний мэдээлэл
-            <ProductCreateModal product={productDetails}>
+            <Link href={'/a'}>
               <Button variant="ghost">
                 <Icons.edit className="h-4 w-4" />
               </Button>
-            </ProductCreateModal>
+            </Link>
+            {/* <ProductCreateModal product={productDetails}>
+              <Button variant="ghost">
+                <Icons.edit className="h-4 w-4" />
+              </Button>
+            </ProductCreateModal> */}
           </CardTitle>
         </CardHeader>
         <CardContent>
