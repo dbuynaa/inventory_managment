@@ -13,6 +13,11 @@ const config = {
         protocol: 'https',
         hostname: 'my-blob-store.public.blob.vercel-storage.com',
         port: ''
+      },
+      {
+        protocol: 'https',
+        hostname: 'ytnv6xxemstkzalq.public.blob.vercel-storage.com',
+        port: ''
       }
     ]
   }

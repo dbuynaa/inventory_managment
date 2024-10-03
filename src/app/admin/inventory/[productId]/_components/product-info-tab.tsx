@@ -17,7 +17,7 @@ export default function ProductInfoTab({
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-between">
             Бүтээгдэхүүний мэдээлэл
-            <Link href={'/a'}>
+            <Link href={`/admin/inventory/${productDetails.id}/edit`}>
               <Button variant="ghost">
                 <Icons.edit className="h-4 w-4" />
               </Button>

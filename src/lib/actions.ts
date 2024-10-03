@@ -9,7 +9,11 @@ import {
   type salesCreateInput
 } from '@/server/api/types';
 import { api } from '@/trpc/server';
-import { ProductStatus, SalesStatus } from '@prisma/client';
+import {
+  type ProductStatus,
+  type SalesStatus,
+  type OrderStatus
+} from '@prisma/client';
 
 import { TRPCError } from '@trpc/server';
 import { AuthError } from 'next-auth';
@@ -147,7 +151,6 @@ export async function createProductOrUpdateAction(
       message: `Product created successfully.`,
       success: true
     };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     if (error instanceof TRPCError)
       return {
@@ -174,7 +177,6 @@ export async function adjustmentCreateAction(
       message: `Adjustemnt created successfully.`,
       success: true
     };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     if (error instanceof TRPCError) {
       return {
@@ -336,5 +338,16 @@ export async function salesUpdateAction(
       message: 'Database Error: Failed to update sales.',
       success: false
     };
+  }
+}
+
+export async function orderStatusAction(orderId: string, status: OrderStatus) {
+  try {
+    await api.order.updateStatus({ id: orderId, status });
+    revalidatePath('/admin/order');
+    return { success: true, message: 'Order status updated successfully.' };
+  } catch (error) {
+    console.error('Failed to update order status:', error);
+    return { success: false, message: 'Failed to update order status.' };
   }
 }

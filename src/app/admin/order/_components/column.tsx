@@ -30,10 +30,39 @@ export const columns: ColumnDef<PurchaseOrderShape>[] = [
       return new Date(getValue<Date>()).toLocaleDateString();
     }
   },
-  {
-    accessorKey: 'status',
-    header: 'Төлөв'
-  },
+  // {
+  //   accessorKey: 'status',
+  //   header: 'Төлөв',
+  //   cell: ({ row, getValue }) => {
+  //     return (
+  //       <Select
+  //         value={getValue<OrderStatus>()}
+  //         onValueChange={async (value) => {
+  //           const updated = await orderStatusAction(
+  //             row.original.id,
+  //             value as OrderStatus
+  //           );
+  //           toast({
+  //             title: updated?.success ? 'Амжилттай' : 'Алдаа',
+  //             description: updated?.message
+  //           });
+  //         }}
+  //       >
+  //         <SelectTrigger >
+  //           <SelectValue />
+  //         </SelectTrigger>
+  //         <SelectContent>
+  //           {Object.values(OrderStatus).map((status) => (
+  //             <SelectItem key={status} value={status}>
+  //               {status}
+  //             </SelectItem>
+  //           ))}
+  //         </SelectContent>
+  //       </Select>
+  //     );
+  //   }
+  // },
+
   {
     accessorKey: 'totalAmount',
     header: 'Нийт Дүн',
@@ -46,16 +75,20 @@ export const columns: ColumnDef<PurchaseOrderShape>[] = [
     header: '',
     cell: ({ getValue }) => {
       return (
-        <Link
-          href={`order?id=${getValue<string>()}`}
-          prefetch={false}
-          as={`order?id=${getValue<string>()}`}
-          replace
-          shallow
-          className={cn(buttonVariants({ variant: 'ghost' }))}
-        >
-          <Icons.details className="h-5 w-5" />
-        </Link>
+        <div className="flex items-center justify-end gap-2">
+          <Link
+            href={`order/${getValue<string>()}/edit`}
+            className={cn(buttonVariants({ variant: 'outline', size: 'icon' }))}
+          >
+            <Icons.edit className="h-4 w-4" />
+          </Link>
+          <Link
+            href={`order/${getValue<string>()}`}
+            className={cn(buttonVariants({ variant: 'outline', size: 'icon' }))}
+          >
+            <Icons.details className="h-4 w-4" />
+          </Link>
+        </div>
       );
     }
   }
