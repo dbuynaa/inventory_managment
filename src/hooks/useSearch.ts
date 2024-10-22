@@ -68,6 +68,7 @@ export function useSearchArray() {
 
       return params.toString();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [searchParams]
   );
 

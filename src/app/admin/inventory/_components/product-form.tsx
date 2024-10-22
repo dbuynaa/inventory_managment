@@ -28,7 +28,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImageUploader } from '@/components/imageUploader';
 import { productCreateInput } from '@/server/api/types';
-// import { Part, list } from '@vercel/blob';
 
 type ProductFormValues = z.infer<typeof productCreateInput>;
 
@@ -38,7 +37,6 @@ interface ProductFormProps {
 
 export const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
   const [isPending, setIsPending] = useState(false);
-  // const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
   const action = initialData ? 'Өөрчлөлтийг хадгалах' : 'Бүтээгдэхүүн нэмэх';
@@ -78,7 +76,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
         description: message
       });
       form.reset();
-      router.push(`/admin/inventory/${data.id}`);
+      router.back();
     } else {
       toast({
         title: 'Алдаа гарлаа',

@@ -1,4 +1,6 @@
-import { api } from '@/trpc/server';
+'use client';
+
+import { api } from '@/trpc/react';
 import {
   Card,
   CardContent,
@@ -16,9 +18,9 @@ import {
 } from '@/components/ui/table';
 import { Package, AlertTriangle, DollarSign, ShoppingCart } from 'lucide-react';
 
-export default async function DashboardPage() {
-  const metrics = await api.dashboard.getMetrics();
-  const recentActivity = await api.dashboard.getRecentActivity();
+export default function DashboardPage() {
+  const { data: metrics } = api.dashboard.getMetrics.useQuery();
+  const { data: recentActivity } = api.dashboard.getRecentActivity.useQuery();
 
   return (
     <div className="container mx-auto p-4">
@@ -33,7 +35,7 @@ export default async function DashboardPage() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.totalProducts}</div>
+            <div className="text-2xl font-bold">{metrics?.totalProducts}</div>
           </CardContent>
         </Card>
         <Card>
@@ -44,7 +46,7 @@ export default async function DashboardPage() {
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.lowStockItems}</div>
+            <div className="text-2xl font-bold">{metrics?.lowStockItems}</div>
           </CardContent>
         </Card>
         <Card>
@@ -53,7 +55,7 @@ export default async function DashboardPage() {
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.recentSales}</div>
+            <div className="text-2xl font-bold">{metrics?.recentSales}</div>
           </CardContent>
         </Card>
         <Card>
@@ -65,7 +67,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${metrics.inventoryValue.toLocaleString()}
+              ${metrics?.inventoryValue.toLocaleString()}
             </div>
           </CardContent>
         </Card>
@@ -90,7 +92,7 @@ export default async function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recentActivity.map((activity, index) => (
+              {recentActivity?.map((activity, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{activity.type}</TableCell>
                   <TableCell>{activity.id}</TableCell>
